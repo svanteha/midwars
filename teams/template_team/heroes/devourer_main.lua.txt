@@ -91,18 +91,6 @@ function object:SkillBuild()
 	end
 end
 
----------------------------------------------------------------
---            SkillBuild override                            --
--- Handles hero skill building. To customize just write own  --
----------------------------------------------------------------
--- @param: none
--- @return: none
-function object:SkillBuildOverride()
-  object:SkillBuildOld()
-end
-object.SkillBuildOld = object.SkillBuild
-object.SkillBuild = object.SkillBuildOverride
-
 ------------------------------------------------------
 --            onthink override                      --
 -- Called every bot tick, custom onthink code here  --
