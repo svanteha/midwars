@@ -58,37 +58,37 @@ core.tLanePreferences = {Jungle = 0, Mid = 5, ShortSolo = 0, LongSolo = 0, Short
 --------------------------------
 local bSkillsValid = false
 function object:SkillBuild()
-	local unitSelf = self.core.unitSelf
+  local unitSelf = self.core.unitSelf
 
-	if not bSkillsValid then
-		skills.hook = unitSelf:GetAbility(0)
-		skills.fart = unitSelf:GetAbility(1)
-		skills.skin = unitSelf:GetAbility(2)
-		skills.ulti = unitSelf:GetAbility(3)
-		skills.attributeBoost = unitSelf:GetAbility(4)
+  if not bSkillsValid then
+    skills.hook = unitSelf:GetAbility(0)
+    skills.fart = unitSelf:GetAbility(1)
+    skills.skin = unitSelf:GetAbility(2)
+    skills.ulti = unitSelf:GetAbility(3)
+    skills.attributeBoost = unitSelf:GetAbility(4)
 
-		if skills.hook and skills.fart and skills.skin and skills.ulti and skills.attributeBoost then
-			bSkillsValid = true
-		else
-			return
-		end
-	end
+    if skills.hook and skills.fart and skills.skin and skills.ulti and skills.attributeBoost then
+      bSkillsValid = true
+    else
+      return
+    end
+  end
 
-	if unitSelf:GetAbilityPointsAvailable() <= 0 then
-		return
-	end
+  if unitSelf:GetAbilityPointsAvailable() <= 0 then
+    return
+  end
 
-	if skills.ulti:CanLevelUp() then
-		skills.ulti:LevelUp()
-	elseif skills.hook:CanLevelUp() then
-		skills.hook:LevelUp()
-	elseif skills.fart:CanLevelUp() then
-		skills.fart:LevelUp()
-	elseif skills.skin:CanLevelUp() then
-		skills.skin:LevelUp()
-	else
-		skills.attributeBoost:LevelUp()
-	end
+  if skills.ulti:CanLevelUp() then
+    skills.ulti:LevelUp()
+  elseif skills.hook:CanLevelUp() then
+    skills.hook:LevelUp()
+  elseif skills.fart:CanLevelUp() then
+    skills.fart:LevelUp()
+  elseif skills.skin:CanLevelUp() then
+    skills.skin:LevelUp()
+  else
+    skills.attributeBoost:LevelUp()
+  end
 end
 
 ------------------------------------------------------
