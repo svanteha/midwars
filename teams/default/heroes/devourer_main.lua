@@ -91,6 +91,11 @@ function object:SkillBuild()
   end
 end
 
+behaviorLib.StartingItems = {"Item_ManaBattery", "2 Item_MinorTotem", "Item_HealthPotion", "Item_RunesOfTheBlight"}
+behaviorLib.LaneItems = {"Item_Marchers", "Item_EnhancedMarchers", "Item_PowerSupply"}
+behaviorLib.MidItems = {"Item_PortalKey", "Item_MagicArmor2"}
+behaviorLib.LateItems = {"Item_BehemothsHeart"}
+
 ------------------------------------------------------
 --            onthink override                      --
 -- Called every bot tick, custom onthink code here  --
