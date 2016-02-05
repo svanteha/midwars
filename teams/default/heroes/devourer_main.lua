@@ -125,4 +125,71 @@ end
 object.oncombateventOld = object.oncombatevent
 object.oncombatevent = object.oncombateventOverride
 
+-- Harass
+local function CustomHarassUtilityOverride(hero)
+  local nUtility = 0
+
+  if skills.hook:CanActivate() then
+    nUtility = nUtility + 50
+  end
+
+  if skills.ulti:CanActivate() then
+    nUtility = nUtility + 60
+  end
+
+  return nUtility
+end
+behaviorLib.CustomHarassUtility = CustomHarassUtilityOverride
+
+local function HarassHeroExecuteOverride(botBrain)
+  local unitTarget = behaviorLib.heroTarget
+  if unitTarget == nil or not unitTarget:IsValid() then
+    return false --can not execute, move on to the next behavior
+  end
+
+  local unitSelf = core.unitSelf
+
+  if unitSelf:IsChanneling() then
+		return
+	end
+
+  local bActionTaken = false
+
+  --since we are using an old pointer, ensure we can still see the target for entity targeting
+  if core.CanSeeUnit(botBrain, unitTarget) then
+    local dist = Vector3.Distance2D(unitSelf:GetPosition(), unitTarget:GetPosition())
+    local attkRange = core.GetAbsoluteAttackRangeToUnit(unitSelf, unitTarget);
+
+    local itemGhostMarchers = core.itemGhostMarchers
+
+    local ulti = skills.ulti
+    local ultiRange = ulti and (ulti:GetRange() + core.GetExtraRange(unitSelf) + core.GetExtraRange(unitTarget)) or 0
+
+    local bUseUlti = true
+
+    if ulti and ulti:CanActivate() and bUseUlti and dist < ultiRange then
+      bActionTaken = core.OrderAbilityEntity(botBrain, ulti, unitTarget)
+    elseif (ulti and ulti:CanActivate() and bUseUlti and dist > ultiRange) then
+      --move in when we want to ult
+      local desiredPos = unitTarget:GetPosition()
+
+      if itemGhostMarchers and itemGhostMarchers:CanActivate() then
+        bActionTaken = core.OrderItemClamp(botBrain, unitSelf, itemGhostMarchers)
+      end
+
+      if not bActionTaken and behaviorLib.lastHarassUtil < behaviorLib.diveThreshold then
+        desiredPos = core.AdjustMovementForTowerLogic(desiredPos)
+      end
+      core.OrderMoveToPosClamp(botBrain, unitSelf, desiredPos, false)
+      bActionTaken = true
+    end
+  end
+
+  if not bActionTaken then
+    return object.harassExecuteOld(botBrain)
+  end
+end
+object.harassExecuteOld = behaviorLib.HarassHeroBehavior["Execute"]
+behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
+
 BotEcho('finished loading devourer_main')
