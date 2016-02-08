@@ -14,7 +14,7 @@ object.bAttackCommands = true
 object.bAbilityCommands = true
 object.bOtherCommands = true
 
-object.bReportBehavior = false
+object.bReportBehavior = true
 object.bDebugUtility = false
 object.bDebugExecute = false
 
@@ -130,11 +130,11 @@ local function CustomHarassUtilityOverride(hero)
   local nUtility = 0
 
   if skills.hook:CanActivate() then
-    nUtility = nUtility + 50
+    nUtility = nUtility + 10
   end
 
   if skills.ulti:CanActivate() then
-    nUtility = nUtility + 60
+    nUtility = nUtility + 40
   end
 
   return nUtility
@@ -150,8 +150,8 @@ local function HarassHeroExecuteOverride(botBrain)
   local unitSelf = core.unitSelf
 
   if unitSelf:IsChanneling() then
-		return
-	end
+    return
+  end
 
   local bActionTaken = false
 

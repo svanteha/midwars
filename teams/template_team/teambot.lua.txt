@@ -1,7 +1,7 @@
 local _G = getfenv(0)
 local object = _G.object
 
-runfile 'bots/object/objectbrain.lua'
+runfile 'bots/teambot/teambotbrain.lua'
 
 object.myName = 'Template Team'
 
