@@ -218,17 +218,55 @@ end
 object.harassExecuteOld = behaviorLib.HarassHeroBehavior["Execute"]
 behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
 
+local function IsFreeLine(pos1, pos2)
+  local tAllies = core.CopyTable(core.localUnits["AllyUnits"])
+  local tEnemies = core.CopyTable(core.localUnits["EnemyCreeps"])
+  local distanceLine = Vector3.Distance2DSq(pos1, pos2)
+  local x1, x2, y1, y2 = pos1.x, pos2.x, pos1.y, pos2.y
+  local spaceBetween = 50 * 50
+  for _, ally in pairs(tAllies) do
+    local posAlly = ally:GetPosition()
+    local x3, y3 = posAlly.x, posAlly.y
+    local calc = x1*y2 - x2*y1 + x2*y3 - x3*y2 + x3*y1 - x1*y3
+    local calc2 = calc * calc
+    local actual = calc2 / distanceLine
+    if actual < spaceBetween then
+      core.DrawXPosition(posAlly, "red", 25)
+      return false
+    end
+  end
+  for _, creep in pairs(tEnemies) do
+    local posCreep = creep:GetPosition()
+    local x3, y3 = posCreep.x, posCreep.y
+    local calc = x1*y2 - x2*y1 + x2*y3 - x3*y2 + x3*y1 - x1*y3
+    local calc2 = calc * calc
+    local actual = calc2 / distanceLine
+    if actual < spaceBetween then
+      core.DrawXPosition(posCreep, "red", 25)
+      return false
+    end
+  end
+  return true
+end
+
 local function DetermineHookTarget(hook)
   local tLocalEnemies = core.CopyTable(core.localUnits["EnemyHeroes"])
   local maxDistance = hook:GetRange()
   local maxDistanceSq = maxDistance * maxDistance
   local myPos = core.unitSelf:GetPosition()
+  local unitTarget = nil
+  local distanceTarget = 0
   for _, unitEnemy in pairs(tLocalEnemies) do
     local enemyPos = unitEnemy:GetPosition()
-    if maxDistanceSq > Vector3.Distance2DSq(myPos, enemyPos) then
-      return unitEnemy
+    local distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
+    if distanceEnemy < maxDistanceSq then
+      if not unitTarget or distanceEnemy < distanceTarget and IsFreeLine(myPos, enemyPos) then
+        unitTarget = unitEnemy
+        distanceTarget = distanceEnemy
+      end
     end
   end
+  return unitTarget
 end
 
 local hookTarget = nil
@@ -238,7 +276,8 @@ local function HookUtility(botBrain)
     local unitTarget = DetermineHookTarget(hook)
     if unitTarget then
       hookTarget = unitTarget:GetPosition()
-      return 30
+      local myPos = core.unitSelf:GetPosition()
+      return 60
     end
   end
   hookTarget = nil
@@ -246,8 +285,6 @@ local function HookUtility(botBrain)
 end
 local function HookExecute(botBrain)
   local hook = skills.hook
-  local myPos = core.unitSelf:GetPosition()
-  core.DrawDebugLine(myPos, hookTarget)
   if hook and hook:CanActivate() and hookTarget then
     return core.OrderAbilityPosition(botBrain, hook, hookTarget)
   end
