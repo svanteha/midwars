@@ -141,6 +141,28 @@ local function CustomHarassUtilityOverride(hero)
 end
 behaviorLib.CustomHarassUtility = CustomHarassUtilityOverride
 
+local itemPK = nil
+local FindItemsOld = core.FindItems
+local function FindItemsFn(botBrain)
+  FindItemsOld(botBrain)
+  if itemPK then
+    return
+  end
+  local unitSelf = core.unitSelf
+  local inventory = unitSelf:GetInventory(false)
+  if inventory ~= nil then
+    for slot = 1, 6, 1 do
+      local curItem = inventory[slot]
+      if curItem and not curItem:IsRecipe() then
+        if not itemPK and curItem:GetName() == "Item_PortalKey" then
+          itemPK = core.WrapInTable(curItem)
+        end
+      end
+    end
+  end
+end
+core.FindItems = FindItemsFn
+
 local function HarassHeroExecuteOverride(botBrain)
   local unitTarget = behaviorLib.heroTarget
   if unitTarget == nil or not unitTarget:IsValid() then
@@ -173,7 +195,11 @@ local function HarassHeroExecuteOverride(botBrain)
       --move in when we want to ult
       local desiredPos = unitTarget:GetPosition()
 
-      if itemGhostMarchers and itemGhostMarchers:CanActivate() then
+      if itemPK and itemPK:CanActivate() then
+        bActionTaken = core.OrderItemPosition(botBrain, unitSelf, itemPK, desiredPos)
+      end
+
+      if not bActionTaken and itemGhostMarchers and itemGhostMarchers:CanActivate() then
         bActionTaken = core.OrderItemClamp(botBrain, unitSelf, itemGhostMarchers)
       end
 
@@ -191,5 +217,46 @@ local function HarassHeroExecuteOverride(botBrain)
 end
 object.harassExecuteOld = behaviorLib.HarassHeroBehavior["Execute"]
 behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
+
+local function DetermineHookTarget(hook)
+  local tLocalEnemies = core.CopyTable(core.localUnits["EnemyHeroes"])
+  local maxDistance = hook:GetRange()
+  local maxDistanceSq = maxDistance * maxDistance
+  local myPos = core.unitSelf:GetPosition()
+  for _, unitEnemy in pairs(tLocalEnemies) do
+    local enemyPos = unitEnemy:GetPosition()
+    if maxDistanceSq > Vector3.Distance2DSq(myPos, enemyPos) then
+      return unitEnemy
+    end
+  end
+end
+
+local hookTarget = nil
+local function HookUtility(botBrain)
+  local hook = skills.hook
+  if hook and hook:CanActivate() then
+    local unitTarget = DetermineHookTarget(hook)
+    if unitTarget then
+      hookTarget = unitTarget:GetPosition()
+      return 30
+    end
+  end
+  hookTarget = nil
+  return 0
+end
+local function HookExecute(botBrain)
+  local hook = skills.hook
+  local myPos = core.unitSelf:GetPosition()
+  core.DrawDebugLine(myPos, hookTarget)
+  if hook and hook:CanActivate() and hookTarget then
+    return core.OrderAbilityPosition(botBrain, hook, hookTarget)
+  end
+  return false
+end
+local HookBehavior = {}
+HookBehavior["Utility"] = HookUtility
+HookBehavior["Execute"] = HookExecute
+HookBehavior["Name"] = "Hooking"
+tinsert(behaviorLib.tBehaviors, HookBehavior)
 
 BotEcho('finished loading devourer_main')
