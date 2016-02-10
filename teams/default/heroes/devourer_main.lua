@@ -219,6 +219,7 @@ object.harassExecuteOld = behaviorLib.HarassHeroBehavior["Execute"]
 behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
 
 local function IsFreeLine(pos1, pos2)
+  core.DrawDebugLine(pos1, pos2, "yellow")
   local tAllies = core.CopyTable(core.localUnits["AllyUnits"])
   local tEnemies = core.CopyTable(core.localUnits["EnemyCreeps"])
   local distanceLine = Vector3.Distance2DSq(pos1, pos2)
@@ -246,6 +247,7 @@ local function IsFreeLine(pos1, pos2)
       return false
     end
   end
+  core.DrawDebugLine(pos1, pos2, "green")
   return true
 end
 
@@ -255,12 +257,13 @@ local function DetermineHookTarget(hook)
   local maxDistanceSq = maxDistance * maxDistance
   local myPos = core.unitSelf:GetPosition()
   local unitTarget = nil
-  local distanceTarget = 0
+  local distanceTarget = 999999999
   for _, unitEnemy in pairs(tLocalEnemies) do
     local enemyPos = unitEnemy:GetPosition()
     local distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
+    core.DrawXPosition(enemyPos, "yellow", 50)
     if distanceEnemy < maxDistanceSq then
-      if not unitTarget or distanceEnemy < distanceTarget and IsFreeLine(myPos, enemyPos) then
+      if distanceEnemy < distanceTarget and IsFreeLine(myPos, enemyPos) then
         unitTarget = unitEnemy
         distanceTarget = distanceEnemy
       end
@@ -276,7 +279,7 @@ local function HookUtility(botBrain)
     local unitTarget = DetermineHookTarget(hook)
     if unitTarget then
       hookTarget = unitTarget:GetPosition()
-      local myPos = core.unitSelf:GetPosition()
+      core.DrawXPosition(hookTarget, "green", 50)
       return 60
     end
   end
