@@ -62,12 +62,12 @@ function object:SkillBuild()
 
   if not bSkillsValid then
     skills.hook = unitSelf:GetAbility(0)
-    skills.fart = unitSelf:GetAbility(1)
+    skills.rot = unitSelf:GetAbility(1)
     skills.skin = unitSelf:GetAbility(2)
     skills.ulti = unitSelf:GetAbility(3)
     skills.attributeBoost = unitSelf:GetAbility(4)
 
-    if skills.hook and skills.fart and skills.skin and skills.ulti and skills.attributeBoost then
+    if skills.hook and skills.rot and skills.skin and skills.ulti and skills.attributeBoost then
       bSkillsValid = true
     else
       return
@@ -82,8 +82,8 @@ function object:SkillBuild()
     skills.ulti:LevelUp()
   elseif skills.hook:CanLevelUp() then
     skills.hook:LevelUp()
-  elseif skills.fart:CanLevelUp() then
-    skills.fart:LevelUp()
+  elseif skills.rot:CanLevelUp() then
+    skills.rot:LevelUp()
   elseif skills.skin:CanLevelUp() then
     skills.skin:LevelUp()
   else
@@ -298,5 +298,62 @@ HookBehavior["Utility"] = HookUtility
 HookBehavior["Execute"] = HookExecute
 HookBehavior["Name"] = "Hooking"
 tinsert(behaviorLib.tBehaviors, HookBehavior)
+
+local RotEnableBehavior = {}
+local function HasEnemiesInRange(unit, range)
+  local enemies = core.CopyTable(core.localUnits["EnemyHeroes"])
+  local rangeSq = range * range
+  local myPos = unit:GetPosition()
+  for _, enemy in pairs(enemies) do
+    if Vector3.Distance2DSq(enemy:GetPosition(), myPos) < rangeSq then
+      return true
+    end
+  end
+  return false
+end
+local function RotEnableUtility(botBrain)
+  local rot = skills.rot
+  local rotRange = rot:GetTargetRadius()
+  local hasEffect = core.unitSelf:HasState("State_Devourer_Ability2_Self")
+  local hasEnemiesClose = HasEnemiesInRange(core.unitSelf, rotRange)
+  if rot:CanActivate() and hasEnemiesClose and not hasEffect then
+    return 50
+  end
+  return 0
+end
+local function RotEnableExecute(botBrain)
+  local rot = skills.rot
+  if rot and rot:CanActivate() then
+    return core.OrderAbility(botBrain, rot)
+  end
+  return false
+end
+RotEnableBehavior["Utility"] = RotEnableUtility
+RotEnableBehavior["Execute"] = RotEnableExecute
+RotEnableBehavior["Name"] = "Rot enable"
+tinsert(behaviorLib.tBehaviors, RotEnableBehavior)
+
+local RotDisableBehavior = {}
+local function RotDisableUtility(botBrain)
+  local rot = skills.rot
+  local rotRange = rot:GetTargetRadius()
+  local hasEffect = core.unitSelf:HasState("State_Devourer_Ability2_Self")
+  local hasEnemiesClose = HasEnemiesInRange(core.unitSelf, rotRange)
+  if rot:CanActivate() and hasEffect and not hasEnemiesClose then
+    return 1000
+  end
+  return 0
+end
+local function RotDisableExecute(botBrain)
+  local rot = skills.rot
+  if rot and rot:CanActivate() then
+    return core.OrderAbility(botBrain, rot)
+  end
+  return false
+end
+RotDisableBehavior["Utility"] = RotDisableUtility
+RotDisableBehavior["Execute"] = RotDisableExecute
+RotDisableBehavior["Name"] = "Rot disable"
+tinsert(behaviorLib.tBehaviors, RotDisableBehavior)
 
 BotEcho('finished loading devourer_main')
