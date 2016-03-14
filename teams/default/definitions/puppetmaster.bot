@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bot
+  name="Default_PuppetMaster"
+  description="Default Puppet Master"
+  heroname="Hero_PuppetMaster"
+  rootlua="../heroes/puppetmaster_main.lua"
+  defaultplayername="DefaultPuppetMasterBot"
+  precachepath="/heroes/puppetmaster/"
+/>
