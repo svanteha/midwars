@@ -122,6 +122,6 @@ object.oncombatevent = object.oncombateventOverride
 
 --items
 behaviorLib.StartingItems =
-        {"Item_IronBuckler", "Item_RunesOfTheBlight", "Item_ManaBattery"}
+        {"Item_IronBuckler", "Item_RunesOfTheBlight", "Item_MagicWand"}
 
 BotEcho('finished loading devourer_main')
