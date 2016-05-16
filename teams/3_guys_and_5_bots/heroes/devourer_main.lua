@@ -121,11 +121,12 @@ object.oncombateventOld = object.oncombatevent
 object.oncombatevent = object.oncombateventOverride
 
 --items
-behaviorLib.StartingItems =
-<<<<<<< HEAD
-        {"Item_IronBuckler", "Item_RunesOfTheBlight", "Item_ManaBattery"}
-=======
-        {"Item_IronBuckler", "Item_RunesOfTheBlight", "Item_MagicWand"}
->>>>>>> 098185af75c20e1cb66282c21fae60d56173e377
+behaviorLib.StartingItems = {"Item_IronBuckler", "Item_RunesOfTheBlight", "Item_ManaBattery"}
+behaviorLib.LaneItems =
+        {"Item_Lifetube", "Item_Marchers", "Item_Shield2", "Item_MysticVestments"} -- Shield2 is HotBL
+behaviorLib.MidItems =
+        {"Item_EnhancedMarchers", "Item_PortalKey"}
+behaviorLib.LateItems =
+        {"Item_Excruciator", "Item_SolsBulwark", "Item_DaemonicBreastplate", "Item_Intelligence7", "Item_HealthMana2", "Item_BehemothsHeart"} --Excruciator is Barbed Armor, Item_Intelligence7 is staff, Item_HealthMana2 is icon
 
 BotEcho('finished loading devourer_main')
