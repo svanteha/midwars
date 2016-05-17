@@ -65,6 +65,8 @@ object.holdThreshold = 22
 object.showThreshold = 22
 object.ultiThreshold = 37
 
+
+
 local function AbilitiesUpUtilityFn()
         local val = 0
  
@@ -90,39 +92,43 @@ core.tLanePreferences = {Jungle = 0, Mid = 5, ShortSolo = 4, LongSolo = 0, Short
 --------------------------------
 -- Skills
 --------------------------------
+
+-- table listing desired skillbuild. 0=Q(hold), 1=W(show), 2=E(whip), 3=R(ulti), 4=AttributeBoost
+object.tSkills = {
+1, 0, 2, 2, 2,
+3, 2, 1, 1, 1,
+3, 0, 0, 0, 4,
+3, 4, 4, 4, 4,
+4, 4, 4, 4, 4,
+}
+
 local bSkillsValid = false
 function object:SkillBuild()
+
   local unitSelf = self.core.unitSelf
 
   if not bSkillsValid then
-    skills.hold = unitSelf:GetAbility(0)
-    skills.show = unitSelf:GetAbility(1)
-    skills.whip = unitSelf:GetAbility(2)
-    skills.ulti = unitSelf:GetAbility(3)
-    skills.attributeBoost = unitSelf:GetAbility(4)
-
-    if skills.hold and skills.show and skills.whip and skills.ulti and skills.attributeBoost then
+    skills.abilEmeraldLightning = unitSelf:GetAbility(0)
+    skills.abilPowerThrow = unitSelf:GetAbility(1)
+    skills.abilDejaVu = unitSelf:GetAbility(2)
+    skills.abilEmeraldRed = unitSelf:GetAbility(3)
+    
+    if skills.abilEmeraldLightning and skills.abilPowerThrow and skills.abilDejaVu and skills.abilEmeraldRed then
       bSkillsValid = true
     else
       return
     end
   end
-
+  
   if unitSelf:GetAbilityPointsAvailable() <= 0 then
-    return
-  end
-
-  if skills.ulti:CanLevelUp() then
-    skills.ulti:LevelUp()
-  elseif skills.whip:CanLevelUp() then
-    skills.whip:LevelUp()
-  elseif skills.hold:CanLevelUp() then
-    skills.hold:LevelUp()
-  elseif skills.show:CanLevelUp() then
-    skills.show:LevelUp()
-  else
-    skills.attributeBoost:LevelUp()
-  end
+        return
+    end
+   
+    local nlev = unitSelf:GetLevel()
+    local nlevpts = unitSelf:GetAbilityPointsAvailable()
+    for i = nlev, nlev+nlevpts do
+        unitSelf:GetAbility( object.tSkills[i] ):LevelUp()
+    end
 end
 
 local function DetermineOwnTarget(skill)  
@@ -152,12 +158,6 @@ end
 -- @return: none
 function object:onthinkOverride(tGameVariables)
   self:onthinkOld(tGameVariables)
-  if skills.hold:CanActivate() then
-    local target = DetermineOwnTarget(skills.hold)
-    if target then
-       core.OrderAbilityEntity(self, skills.hold, target)
-    end
-  end 
   -- custom code here
 end
 object.onthinkOld = object.onthink
@@ -170,12 +170,6 @@ object.onthink = object.onthinkOverride
 -- @param: eventdata
 -- @return: none
 function object:oncombateventOverride(EventData)
-  if skills.show:CanActivate() then
-    local target = DetermineOwnTarget(skills.show)
-    if target then
-      core.OrderAbilityEntity(self, skills.show, target)
-    end
-  end
 
 
   self:oncombateventOld(EventData)

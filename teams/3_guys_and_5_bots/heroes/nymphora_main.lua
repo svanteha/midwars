@@ -56,39 +56,43 @@ core.tLanePreferences = {Jungle = 0, Mid = 0, ShortSolo = 0, LongSolo = 0, Short
 --------------------------------
 -- Skills
 --------------------------------
+-- table listing desired skillbuild. 0=Q(heal), 1=W(mana), 2=E(stun), 3=R(ulti), 4=AttributeBoost
+object.tSkills = {
+2,1,2,0,
+0,0,0,1,
+1,1,2,4,
+2,4,4,4,
+4,4,4,4,
+4,4,3,3,3
+}
+
 local bSkillsValid = false
 function object:SkillBuild()
+
   local unitSelf = self.core.unitSelf
 
   if not bSkillsValid then
-    skills.heal = unitSelf:GetAbility(0)
-    skills.mana = unitSelf:GetAbility(1)
-    skills.stun = unitSelf:GetAbility(2)
-    skills.ulti = unitSelf:GetAbility(3)
-    skills.attributeBoost = unitSelf:GetAbility(4)
-
-    if skills.heal and skills.mana and skills.stun and skills.ulti and skills.attributeBoost then
+    skills.abilEmeraldLightning = unitSelf:GetAbility(0)
+    skills.abilPowerThrow = unitSelf:GetAbility(1)
+    skills.abilDejaVu = unitSelf:GetAbility(2)
+    skills.abilEmeraldRed = unitSelf:GetAbility(3)
+    
+    if skills.abilEmeraldLightning and skills.abilPowerThrow and skills.abilDejaVu and skills.abilEmeraldRed then
       bSkillsValid = true
     else
       return
     end
   end
-
+  
   if unitSelf:GetAbilityPointsAvailable() <= 0 then
-    return
-  end
-
-  if skills.ulti:CanLevelUp() then
-    skills.ulti:LevelUp()
-  elseif skills.heal:CanLevelUp() then
-    skills.heal:LevelUp()
-  elseif skills.mana:CanLevelUp() then
-    skills.mana:LevelUp()
-  elseif skills.stun:CanLevelUp() then
-    skills.stun:LevelUp()
-  else
-    skills.attributeBoost:LevelUp()
-  end
+        return
+    end
+   
+    local nlev = unitSelf:GetLevel()
+    local nlevpts = unitSelf:GetAbilityPointsAvailable()
+    for i = nlev, nlev+nlevpts do
+        unitSelf:GetAbility( object.tSkills[i] ):LevelUp()
+    end
 end
 
 ------------------------------------------------------
