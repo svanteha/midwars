@@ -33,8 +33,9 @@ runfile "bots/botbraincore.lua"
 runfile "bots/eventsLib.lua"
 runfile "bots/metadata.lua"
 runfile "bots/behaviorLib.lua"
+runfile "bots/teams/default/hook_arrow.lua"
 
-local core, eventsLib, behaviorLib, metadata, skills = object.core, object.eventsLib, object.behaviorLib, object.metadata, object.skills
+local core, eventsLib, behaviorLib, metadata, skills, hook_arrow = object.core, object.eventsLib, object.behaviorLib, object.metadata, object.skills, object.hook_arrow
 
 local print, ipairs, pairs, string, table, next, type, tinsert, tremove, tsort, format, tostring, tonumber, strfind, strsub
   = _G.print, _G.ipairs, _G.pairs, _G.string, _G.table, _G.next, _G.type, _G.table.insert, _G.table.remove, _G.table.sort, _G.string.format, _G.tostring, _G.tonumber, _G.string.find, _G.string.sub
@@ -218,38 +219,7 @@ end
 object.harassExecuteOld = behaviorLib.HarassHeroBehavior["Execute"]
 behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
 
-local function IsFreeLine(pos1, pos2)
-  core.DrawDebugLine(pos1, pos2, "yellow")
-  local tAllies = core.CopyTable(core.localUnits["AllyUnits"])
-  local tEnemies = core.CopyTable(core.localUnits["EnemyCreeps"])
-  local distanceLine = Vector3.Distance2DSq(pos1, pos2)
-  local x1, x2, y1, y2 = pos1.x, pos2.x, pos1.y, pos2.y
-  local spaceBetween = 50 * 50
-  for _, ally in pairs(tAllies) do
-    local posAlly = ally:GetPosition()
-    local x3, y3 = posAlly.x, posAlly.y
-    local calc = x1*y2 - x2*y1 + x2*y3 - x3*y2 + x3*y1 - x1*y3
-    local calc2 = calc * calc
-    local actual = calc2 / distanceLine
-    if actual < spaceBetween then
-      core.DrawXPosition(posAlly, "red", 25)
-      return false
-    end
-  end
-  for _, creep in pairs(tEnemies) do
-    local posCreep = creep:GetPosition()
-    local x3, y3 = posCreep.x, posCreep.y
-    local calc = x1*y2 - x2*y1 + x2*y3 - x3*y2 + x3*y1 - x1*y3
-    local calc2 = calc * calc
-    local actual = calc2 / distanceLine
-    if actual < spaceBetween then
-      core.DrawXPosition(posCreep, "red", 25)
-      return false
-    end
-  end
-  core.DrawDebugLine(pos1, pos2, "green")
-  return true
-end
+
 
 local function DetermineHookTarget(hook)
   local tLocalEnemies = core.CopyTable(core.localUnits["EnemyHeroes"])
@@ -263,7 +233,7 @@ local function DetermineHookTarget(hook)
     local distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
     core.DrawXPosition(enemyPos, "yellow", 50)
     if distanceEnemy < maxDistanceSq then
-      if distanceEnemy < distanceTarget and IsFreeLine(myPos, enemyPos) then
+      if distanceEnemy < distanceTarget and hook_arrow.IsFreeLine(myPos, enemyPos) then
         unitTarget = unitEnemy
         distanceTarget = distanceEnemy
       end
