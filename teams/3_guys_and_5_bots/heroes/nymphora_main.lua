@@ -72,10 +72,10 @@ function object:SkillBuild()
   local unitSelf = self.core.unitSelf
 
   if not bSkillsValid then
-    skills.abilEmeraldLightning = unitSelf:GetAbility(0)
-    skills.abilPowerThrow = unitSelf:GetAbility(1)
-    skills.abilDejaVu = unitSelf:GetAbility(2)
-    skills.abilEmeraldRed = unitSelf:GetAbility(3)
+    skills.heal = unitSelf:GetAbility(0)
+    skills.mana = unitSelf:GetAbility(1)
+    skills.stun = unitSelf:GetAbility(2)
+    skills.ulti = unitSelf:GetAbility(3)
     
     if skills.abilEmeraldLightning and skills.abilPowerThrow and skills.abilDejaVu and skills.abilEmeraldRed then
       bSkillsValid = true

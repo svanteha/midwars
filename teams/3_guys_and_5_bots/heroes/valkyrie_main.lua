@@ -66,17 +66,18 @@ object.tSkills = {
 }
 
 local bSkillsValid = false
+
 function object:SkillBuild()
 
   local unitSelf = self.core.unitSelf
 
   if not bSkillsValid then
-    skills.abilEmeraldLightning = unitSelf:GetAbility(0)
-    skills.abilPowerThrow = unitSelf:GetAbility(1)
-    skills.abilDejaVu = unitSelf:GetAbility(2)
-    skills.abilEmeraldRed = unitSelf:GetAbility(3)
+    skills.starstorm = unitSelf:GetAbility(0)
+    skills.arrow = unitSelf:GetAbility(1)
+    skills.leap = unitSelf:GetAbility(2)
+    skills.ulti = unitSelf:GetAbility(3)
     
-    if skills.abilEmeraldLightning and skills.abilPowerThrow and skills.abilDejaVu and skills.abilEmeraldRed then
+    if skills.starstorm and skills.arrow and skills.leap and skills.ulti then
       bSkillsValid = true
     else
       return

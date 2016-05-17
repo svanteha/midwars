@@ -108,12 +108,12 @@ function object:SkillBuild()
   local unitSelf = self.core.unitSelf
 
   if not bSkillsValid then
-    skills.abilEmeraldLightning = unitSelf:GetAbility(0)
-    skills.abilPowerThrow = unitSelf:GetAbility(1)
-    skills.abilDejaVu = unitSelf:GetAbility(2)
-    skills.abilEmeraldRed = unitSelf:GetAbility(3)
+    skills.hold = unitSelf:GetAbility(0)
+    skills.show = unitSelf:GetAbility(1)
+    skills.whip = unitSelf:GetAbility(2)
+    skills.ulti = unitSelf:GetAbility(3)
     
-    if skills.abilEmeraldLightning and skills.abilPowerThrow and skills.abilDejaVu and skills.abilEmeraldRed then
+    if skills.hold and skills.show and skills.whip and skills.ulti then
       bSkillsValid = true
     else
       return
@@ -170,6 +170,7 @@ object.onthink = object.onthinkOverride
 -- @param: eventdata
 -- @return: none
 function object:oncombateventOverride(EventData)
+  
 
 
   self:oncombateventOld(EventData)
