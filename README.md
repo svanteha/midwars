@@ -17,3 +17,7 @@ host_timeScale
 
 #itemapi
 http://hon.gamepedia.com/API_ItemList
+
+Bot tutorial Pyro: 
+
+http://forum.hon.garena.com/showthread.php?45138-Bot-Creation-Tutorial
