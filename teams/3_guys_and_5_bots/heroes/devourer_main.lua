@@ -123,7 +123,7 @@ object.oncombatevent = object.oncombateventOverride
 --items
 behaviorLib.StartingItems = {"Item_IronBuckler", "Item_RunesOfTheBlight", "Item_ManaBattery"}
 behaviorLib.LaneItems =
-        {"Item_Lifetube", "Item_Marchers", "Item_Shield2", "Item_MysticVestments"} -- Shield2 is HotBL
+        {"Item_Marchers","Item_PowerSupply", "Item_MysticVestments", "Item_Shield2"} -- Shield2 is HotBL
 behaviorLib.MidItems =
         {"Item_EnhancedMarchers", "Item_PortalKey"}
 behaviorLib.LateItems =

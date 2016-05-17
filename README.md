@@ -15,4 +15,5 @@
 ##speed it up nice
 host_timeScale
 
-#fixed?
+#itemapi
+http://hon.gamepedia.com/API_ItemList
