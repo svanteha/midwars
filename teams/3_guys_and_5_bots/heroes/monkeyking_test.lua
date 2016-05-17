@@ -99,7 +99,6 @@ end
 -- @return: none
 function object:onthinkOverride(tGameVariables)
   self:onthinkOld(tGameVariables)
-
   -- custom code here
 end
 object.onthinkOld = object.onthink

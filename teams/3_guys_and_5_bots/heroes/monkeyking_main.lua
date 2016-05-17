@@ -101,6 +101,9 @@ function object:onthinkOverride(tGameVariables)
   self:onthinkOld(tGameVariables)
 
   -- custom code here
+if skills.dash:CanActivate() then
+   core.OrderAbility(self, skills.dash)
+end
 end
 object.onthinkOld = object.onthink
 object.onthink = object.onthinkOverride

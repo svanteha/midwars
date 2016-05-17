@@ -91,6 +91,25 @@ function object:SkillBuild()
   end
 end
 
+local function DetermineOwnTarget(skill)  
+  local tLocalEnemies = core.CopyTable(core.localUnits["EnemyHeroes"])
+  local myPos = core.unitSelf:GetPosition()
+  local unitTarget = nil
+  local maxDistance = skill:GetRange()
+  local distanceTarget = 999999999
+  for _, unitEnemy in pairs(tLocalEnemies) do
+    local enemyPos = unitEnemy:GetPosition()
+    local distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
+    if distanceEnemy < maxDistance then
+      if distanceEnemy < distanceTarget then
+        unitTarget = unitEnemy
+        distanceTarget = distanceEnemy
+      end
+    end
+  end
+  return unitTarget
+end
+
 ------------------------------------------------------
 --            onthink override                      --
 -- Called every bot tick, custom onthink code here  --
@@ -99,7 +118,12 @@ end
 -- @return: none
 function object:onthinkOverride(tGameVariables)
   self:onthinkOld(tGameVariables)
-
+  if skills.hold:CanActivate() then
+    local target = DetermineOwnTarget(skills.hold)
+    if target then
+       core.OrderAbilityEntity(self, skills.hold, target)
+    end
+  end 
   -- custom code here
 end
 object.onthinkOld = object.onthink
@@ -116,6 +140,8 @@ function object:oncombateventOverride(EventData)
 
   -- custom code here
 end
+
+
 -- override combat event trigger function.
 object.oncombateventOld = object.oncombatevent
 object.oncombatevent = object.oncombateventOverride
