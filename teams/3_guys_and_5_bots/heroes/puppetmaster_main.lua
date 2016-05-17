@@ -136,6 +136,14 @@ object.onthink = object.onthinkOverride
 -- @param: eventdata
 -- @return: none
 function object:oncombateventOverride(EventData)
+  if skills.show:CanActivate() then
+    local target = DetermineOwnTarget(skills.show)
+    if target then
+      core.OrderAbilityEntity(self, skills.show, target)
+    end
+  end
+
+
   self:oncombateventOld(EventData)
 
   -- custom code here
