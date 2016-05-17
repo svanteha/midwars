@@ -48,6 +48,40 @@ BotEcho('loading puppetmaster_main...')
 
 object.heroName = 'Hero_PuppetMaster'
 
+
+---------------------------------------------------
+--                   Utilities                   --
+---------------------------------------------------
+-- bonus aggression points if a skill/item is available for use
+object.hold = 20
+object.show = 20
+object.ulti = 35
+-- bonus aggression points that are applied to the bot upon successfully using a skill/item
+object.holdUse = 20
+object.showUse = 20
+object.ultiUse = 35
+--thresholds of aggression the bot must reach to use these abilities
+object.holdThreshold = 22
+object.showThreshold = 22
+object.ultiThreshold = 37
+
+local function AbilitiesUpUtilityFn()
+        local val = 0
+ 
+        if skills.hold:CanActivate() then
+                val = val + object.hold
+        end
+ 
+        if skills.show:CanActivate() then
+                val = val + object.show
+        end
+ 
+        if skills.ulti:CanActivate() then
+                val = val + object.ulti
+        end
+ 
+        return val
+end
 --------------------------------
 -- Lanes
 --------------------------------
