@@ -58,15 +58,15 @@ core.tLanePreferences = {Jungle = 0, Mid = 5, ShortSolo = 0, LongSolo = 0, Short
 ---------------------------------------------------
 -- bonus aggression points if a skill/item is available for use
 object.hook = 20
-object.decay = 20
+object.rot = 20
 object.ulti = 35
 -- bonus aggression points that are applied to the bot upon successfully using a skill/item
-object.holdUse = 20
-object.showUse = 20
+object.hookUse = 20
+object.rotUse = 20
 object.ultiUse = 35
 --thresholds of aggression the bot must reach to use these abilities
 object.hookThreshold = 22
-object.showThreshold = 22
+object.rotThreshold = 22
 object.ultiThreshold = 37
 
 
@@ -78,7 +78,7 @@ local function AbilitiesUpUtilityFn()
                 val = val + object.hold
         end
  
-        if skills.show:CanActivate() then
+        if skills.rot:CanActivate() then
                 val = val + object.show
         end
  
@@ -194,7 +194,7 @@ local function HookUtility(botBrain)
     if unitTarget then
       hookTarget = unitTarget:GetPosition()
       core.DrawXPosition(hookTarget, "green", 50)
-      return 60
+      return 0
     end
   end
   hookTarget = nil
@@ -255,7 +255,7 @@ local function RotDisableUtility(botBrain)
   local hasEnemiesClose = HasEnemiesInRange(core.unitSelf, rotRange)
   if rot:CanActivate() and hasEffect and not hasEnemiesClose then
     --muutin tätä oli ennen 1000
-    return 0
+    return 100
   end
   return 0
 end
@@ -271,12 +271,100 @@ RotDisableBehavior["Execute"] = RotDisableExecute
 RotDisableBehavior["Name"] = "Rot disable"
 tinsert(behaviorLib.tBehaviors, RotDisableBehavior)
 
--- Harass general. Heron agressiivisuus luku: isompi luku -> vihasempi kaveri. Tähän voi määrittää logiikkaa agressiivisuudelle
-local function CustomHarassUtilityOverride(hero)
-  local nUtility = 0
-  return 1000000
+
+
+local UltiBehavior = {}
+local function UltiUtility(botBrain)
+  local ulti = skills.ulti
+  -- Tarkista tornirange jossain vaiheessa 
+  if ulti:CanActivate() and ulti:GetManaCost() < core.unitSelf:GetMana() then
+    return 100
+  end
+  return 0
 end
-behaviorLib.CustomHarassUtility = CustomHarassUtilityOverride
+
+local function UltiExecute(botBrain)
+local hook = skills.hook
+local unitTarget = behaviorLib.heroTarget
+  if unitTarget == nil or not unitTarget:IsValid() then
+    return false --can not execute, move on to the next behavior
+  end
+
+  local unitSelf = core.unitSelf
+
+  if unitSelf:IsChanneling() then
+    return
+  end
+
+  local bActionTaken = false
+
+  --since we are using an old pointer, ensure we can still see the target for entity targeting
+  if core.CanSeeUnit(botBrain, unitTarget) then
+    local dist = Vector3.Distance2D(unitSelf:GetPosition(), unitTarget:GetPosition())
+    local attkRange = core.GetAbsoluteAttackRangeToUnit(unitSelf, unitTarget);
+
+    local itemGhostMarchers = core.itemGhostMarchers
+
+    local ulti = skills.ulti
+    local ultiRange = ulti and (ulti:GetRange() + core.GetExtraRange(unitSelf) + core.GetExtraRange(unitTarget)) or 0
+
+    local bUseUlti = true
+
+    if ulti and ulti:CanActivate() and bUseUlti and dist < ultiRange then
+      bActionTaken = core.OrderAbilityEntity(botBrain, ulti, unitTarget)
+
+      if hook and hook:CanActivate() and not core.unitSelf:IsChanneling() and not core.unitSelf:HasState("State_Devourer_Ability4_Self")
+      then
+      core.OrderAbilityPosition(botBrain, hook, DetermineHookTarget(hook):GetPosition())
+      core.BotEcho("HOOKKASIN")
+      end
+
+    elseif (ulti and ulti:CanActivate() and bUseUlti and dist > ultiRange) then
+      --move in when we want to ult
+      local desiredPos = unitTarget:GetPosition()
+      bActionTaken = core.OrderMoveToPosClamp(botBrain, unitSelf, desiredPos, false)
+    end
+  end
+
+  if not bActionTaken then
+    return object.harassExecuteOld(botBrain)
+  end
+end  
+
+
+
+UltiBehavior["Utility"] = UltiUtility
+UltiBehavior["Execute"] = UltiExecute
+UltiBehavior["Name"] = "Ulti enable"
+tinsert(behaviorLib.tBehaviors, UltiBehavior)
+
+
+-- Harass general. Heron agressiivisuus luku: isompi luku -> vihasempi kaveri. Tähän voi määrittää logiikkaa agressiivisuudelle
+------------------------------------------------------
+-- CustomHarassUtility Override --
+-- Change Utility according to usable spells here --
+------------------------------------------------------
+-- @param: IunitEntity hero
+-- @return: number
+local function CustomHarassUtilityFnOverride(hero)
+  local nUtil = 0
+
+  if skills.hook:CanActivate() then
+    nUtil = nUtil + object.hook
+  end
+
+  if skills.rot:CanActivate() then
+    nUtil = nUtil + object.rot
+  end
+
+  if skills.ulti:CanActivate() then
+    nUtil = nUtil + object.ulti
+  end
+
+return nUtil
+end
+-- assisgn custom Harrass function to the behaviourLib object
+behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride 
 
 -- Harass hero
 local function HarassHeroExecuteOverride(botBrain)
@@ -310,8 +398,7 @@ local function HarassHeroExecuteOverride(botBrain)
     elseif (ulti and ulti:CanActivate() and bUseUlti and dist > ultiRange) then
       --move in when we want to ult
       local desiredPos = unitTarget:GetPosition()
-      core.OrderMoveToPosClamp(botBrain, unitSelf, desiredPos, false)
-      bActionTaken = true
+      bActionTaken = core.OrderMoveToPosClamp(botBrain, unitSelf, desiredPos, false)
     end
   end
 
