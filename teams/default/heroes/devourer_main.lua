@@ -33,9 +33,9 @@ runfile "bots/botbraincore.lua"
 runfile "bots/eventsLib.lua"
 runfile "bots/metadata.lua"
 runfile "bots/behaviorLib.lua"
-runfile "bots/teams/default/hook_arrow.lua"
+runfile "bots/teams/default/generics.lua"
 
-local core, eventsLib, behaviorLib, metadata, skills, hook_arrow = object.core, object.eventsLib, object.behaviorLib, object.metadata, object.skills, object.hook_arrow
+local core, eventsLib, behaviorLib, metadata, skills, generics = object.core, object.eventsLib, object.behaviorLib, object.metadata, object.skills, object.generics
 
 local print, ipairs, pairs, string, table, next, type, tinsert, tremove, tsort, format, tostring, tonumber, strfind, strsub
   = _G.print, _G.ipairs, _G.pairs, _G.string, _G.table, _G.next, _G.type, _G.table.insert, _G.table.remove, _G.table.sort, _G.string.format, _G.tostring, _G.tonumber, _G.string.find, _G.string.sub
@@ -233,7 +233,7 @@ local function DetermineHookTarget(hook)
     local distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
     core.DrawXPosition(enemyPos, "yellow", 50)
     if distanceEnemy < maxDistanceSq then
-      if distanceEnemy < distanceTarget and hook_arrow.IsFreeLine(myPos, enemyPos) then
+      if distanceEnemy < distanceTarget and generics.IsFreeLine(myPos, enemyPos) then
         unitTarget = unitEnemy
         distanceTarget = distanceEnemy
       end

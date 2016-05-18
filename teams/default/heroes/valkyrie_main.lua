@@ -33,10 +33,10 @@ runfile "bots/botbraincore.lua"
 runfile "bots/eventsLib.lua"
 runfile "bots/metadata.lua"
 runfile "bots/behaviorLib.lua"
-runfile "bots/teams/default/hook_arrow.lua"
+runfile "bots/teams/default/generics.lua"
 
 
-local core, eventsLib, behaviorLib, metadata, skills, hook_arrow = object.core, object.eventsLib, object.behaviorLib, object.metadata, object.skills, object.hook_arrow
+local core, eventsLib, behaviorLib, metadata, skills, generics = object.core, object.eventsLib, object.behaviorLib, object.metadata, object.skills, object.generics
 
 local print, ipairs, pairs, string, table, next, type, tinsert, tremove, tsort, format, tostring, tonumber, strfind, strsub
   = _G.print, _G.ipairs, _G.pairs, _G.string, _G.table, _G.next, _G.type, _G.table.insert, _G.table.remove, _G.table.sort, _G.string.format, _G.tostring, _G.tonumber, _G.string.find, _G.string.sub
@@ -123,15 +123,16 @@ object.oncombateventOld = object.oncombatevent
 object.oncombatevent = object.oncombateventOverride
 
 function behaviorLib.CustomRetreatExecute(botBrain)
-	local leap = skills.leap
-	local unitSelf = core.unitSelf
-	local angle = core.HeadingDifference(unitSelf, core.allyMainBaseStructure:GetPosition())
-	
+  local leap = skills.leap
+  local unitSelf = core.unitSelf
+  local angle = core.HeadingDifference(unitSelf, core.allyMainBaseStructure:GetPosition())
+  local unitsNearby = core.AssessLocalUnits(botBrain, unitSelf:GetPosition(), 500)
+  
 
-	if leap and leap:CanActivate() and angle < 0.5 then
-		return core.OrderAbility(botBrain, leap)
-	end
-	return false
+  if unitSelf:GetHealthPercent() < 0.3 and #unitsNearby.EnemyHeroes and leap and leap:CanActivate() and angle < 0.5 then
+    return core.OrderAbility(botBrain, leap)
+  end
+  return false
 end
 
 local function CustomHarassUtilityFnOverride(target)
@@ -141,45 +142,28 @@ local function CustomHarassUtilityFnOverride(target)
 
   --jos potu käytössä niin ei agroilla
   if core.unitSelf:HasState(core.idefHealthPotion.stateName) then
-
-    return -10000
+    return -100
   end
 
   --jos tornin rangella ni ei mennä
   if core.GetClosestEnemyTower(myPos, 720) then
-
-    return -10000
+    return -100
   end
 
- --  if target and target:GetHealth() < 250 and core.unitSelf:GetHealth() > 400 then
- --   return 100
- -- end
-
-  if core.unitSelf:GetHealth() < 200 then
-     return -10000
+  if core.unitSelf:GetHealthPercent() < 0.3 then
+     return -100
   end
 
   local unitsNearby = core.AssessLocalUnits(object, myPos,100)
-  --jos ei omia creeppejä 500 rangella, niin ei aggroa
   for id, creep in pairs(unitsNearby.EnemyCreeps) do
-      if(creep:GetAttackType() == "ranged" or Vector3.Distance2D(myPos, creep:GetPosition()) < 20) then
-      core.DrawXPosition(creep:GetPosition())
-        return -10000
-      end 
+    local creepPos = creep:GetPosition()
+    if(creep:GetAttackType() == "ranged" or Vector3.Distance2D(myPos, creepPos) < 20) then
+      core.DrawXPosition(creepPos)
+      return -100
+    end 
   end
 
-  return 50
-  --if core.NumberElements(unitsNearby.AllyCreeps) == 0 then
-  --   return 0
-  --  end
-
-  --if unitTarget and unitTarget:GetHealth() < 250 and core.unitSelf:GetHealth() > 400 then
-  --  return 100
-  --end
-
-
-
-  --return nUtil
+  return 0
 end
 behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride
 
@@ -225,7 +209,7 @@ local function DetermineArrowTarget(arrow)
     local distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
     core.DrawXPosition(enemyPos, "yellow", 50)
     if distanceEnemy < maxDistanceSq then
-      if distanceEnemy < distanceTarget and hook_arrow.IsFreeLine(myPos, enemyPos) then
+      if distanceEnemy < distanceTarget and generics.IsFreeLine(myPos, enemyPos) then
         unitTarget = unitEnemy
         distanceTarget = distanceEnemy
       end

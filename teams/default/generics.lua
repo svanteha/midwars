@@ -10,12 +10,12 @@ local ceil, floor, pi, tan, atan, atan2, abs, cos, sin, acos, max, random
 
 local BotEcho, VerboseLog, BotLog = core.BotEcho, core.VerboseLog, core.BotLog
 
-object.hook_arrow = {}
-local hook_arrow = object.hook_arrow
+object.generics = {}
+local generics = object.generics
 
-BotEcho("loading hook_arrow")
+BotEcho("loading default generics ..")
 
-function hook_arrow.IsFreeLine(pos1, pos2)
+function generics.IsFreeLine(pos1, pos2)
   core.DrawDebugLine(pos1, pos2, "yellow")
   local tAllies = core.CopyTable(core.localUnits["AllyUnits"])
   local tEnemies = core.CopyTable(core.localUnits["EnemyCreeps"])
@@ -47,3 +47,5 @@ function hook_arrow.IsFreeLine(pos1, pos2)
   core.DrawDebugLine(pos1, pos2, "green")
   return true
 end
+
+BotEcho("default generics done.")
