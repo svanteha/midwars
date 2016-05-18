@@ -80,4 +80,67 @@ function generics.CustomHarassUtility(target)
   return nUtil
 end
 
+
+local function PositionSelfExecuteFix(botBrain)
+	local nCurrentTimeMS = HoN.GetGameTime()
+	local unitSelf = core.unitSelf
+	local vecMyPosition = unitSelf:GetPosition()
+	
+	if core.unitSelf:IsChanneling() then 
+		return
+	end
+
+	local vecDesiredPos = vecMyPosition
+	local unitTarget = nil
+	vecDesiredPos, unitTarget = behaviorLib.PositionSelfLogic(botBrain)
+
+	if vecDesiredPos then
+		behaviorLib.MoveExecute(botBrain, vecDesiredPos)
+	else
+		BotEcho("PositionSelfExecute - nil desired position")
+		return false
+	end
+
+end
+behaviorLib.PositionSelfBehavior["Execute"] = PositionSelfExecuteFix
+
+local function PushExecuteFix(botBrain)
+	if core.unitSelf:IsChanneling() then 
+		return
+	end
+
+	local unitSelf = core.unitSelf
+	local bActionTaken = false
+
+	--Attack creeps if we're in range
+	if bActionTaken == false then
+		local unitTarget = core.unitEnemyCreepTarget
+		if unitTarget then
+			local nRange = core.GetAbsoluteAttackRangeToUnit(unitSelf, unitTarget)
+			if unitSelf:GetAttackType() == "melee" then
+				--override melee so they don't stand *just* out of range
+				nRange = 250
+			end
+
+			if unitSelf:IsAttackReady() and core.IsUnitInRange(unitSelf, unitTarget, nRange) then
+				bActionTaken = core.OrderAttackClamp(botBrain, unitSelf, unitTarget)
+			end
+
+		end
+	end
+	
+	if bActionTaken == false then
+		local vecDesiredPos = behaviorLib.PositionSelfLogic(botBrain)
+		if vecDesiredPos then
+			bActionTaken = behaviorLib.MoveExecute(botBrain, vecDesiredPos)
+			
+		end
+	end
+	
+	if bActionTaken == false then
+		return false
+	end
+end
+behaviorLib.PushBehavior["Execute"] = PushExecuteFix
+
 BotEcho("default generics done.")

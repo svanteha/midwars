@@ -49,6 +49,13 @@ BotEcho('loading puppetmaster_main...')
 
 object.heroName = 'Hero_PuppetMaster'
 
+
+behaviorLib.StartingItems = {"Item_ManaBattery", "2 Item_MinorTotem", "Item_HealthPotion", "Item_RunesOfTheBlight"}
+behaviorLib.LaneItems = {"Item_Marchers", "Item_EnhancedMarchers", "Item_PowerSupply"}
+behaviorLib.MidItems = {"Item_PortalKey", "Item_MagicArmor2"}
+behaviorLib.LateItems = {"Item_BehemothsHeart"}
+
+
 --------------------------------
 -- Lanes
 --------------------------------

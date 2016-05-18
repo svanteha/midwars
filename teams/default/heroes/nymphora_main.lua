@@ -14,7 +14,7 @@ object.bAttackCommands = true
 object.bAbilityCommands = true
 object.bOtherCommands = true
 
-object.bReportBehavior = false
+object.bReportBehavior = true
 object.bDebugUtility = false
 object.bDebugExecute = false
 
@@ -48,6 +48,13 @@ local Clamp = core.Clamp
 BotEcho('loading nymphora_main...')
 
 object.heroName = 'Hero_Fairy'
+
+
+behaviorLib.StartingItems = {"Item_ManaBattery", "Item_MinorTotem", "Item_GuardianRing", "Item_CrushingClaws"}
+behaviorLib.LaneItems = {"Item_ManaRegen3", "Item_Marchers", "Item_EnhancedMarchers", "Item_MysticVestments"}
+behaviorLib.MidItems = {"Item_Astrolabe", "Item_MagicArmor2"}
+behaviorLib.LateItems = {"Item_BehemothsHeart"}
+
 
 --------------------------------
 -- Lanes
@@ -101,7 +108,6 @@ end
 function object:onthinkOverride(tGameVariables)
   self:onthinkOld(tGameVariables)
 
-  -- custom code here
 end
 object.onthinkOld = object.onthink
 object.onthink = object.onthinkOverride
@@ -161,7 +167,7 @@ behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride
 
 local function ManaUtility(botBrain)
   local mana = skills.mana
-  if mana:CanActivate() then
+  if mana:CanActivate() and core.unitSelf:GetManaPercent() < 1 then
      return 50
   end
   return 0
