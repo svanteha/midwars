@@ -124,20 +124,31 @@ end
 object.oncombateventOld = object.oncombatevent
 object.oncombatevent = object.oncombateventOverride
 
-function behaviorLib.CustomRetreatExecute(botBrain)
-  local leap = skills.leap
-  local unitSelf = core.unitSelf
-  local angle = core.HeadingDifference(unitSelf, core.allyMainBaseStructure:GetPosition())
+--function behaviorLib.CustomRetreatExecute(botBrain)
+ -- local leap = skills.leap
+ -- local unitSelf = core.unitSelf
+  --local unitTarget = behaviorLib.heroTarget
+
+
   
 
-  if leap and leap:CanActivate() and angle < 0.5 then
+ -- if leap and leap:CanActivate() and angle < 0.5 then
     --return core.OrderAbility(botBrain, leap)
-  end
-  return false
-end
+  --end
+  --return false
+--end
 
 local bCombo = false
 local function ComboUtility(botBrain)
+
+  local unitSelf = core.unitSelf
+  local unitTarget = behaviorLib.heroTarget
+  
+  
+  if unitTarget == nil then
+    return 0
+  end
+  local facing = core.HeadingDifference(unitSelf, unitTarget:GetPosition())
 
   if bCombo then
     return 100
@@ -146,7 +157,7 @@ local function ComboUtility(botBrain)
   --jos starstorm valmiina ja lvl 3, leappaa päälle ja castaa se
   local manacost = (skills.leap:GetManaCost() + skills.starstorm:GetManaCost())
 
-  if (skills.starstorm:CanActivate() and skills.starstorm:GetLevel() >=3 and skills.leap:CanActivate() and (core.unitSelf:GetMana() >=  manacost)) then
+  if (skills.starstorm:CanActivate() and skills.starstorm:GetLevel() >=3 and skills.leap:CanActivate() and (core.unitSelf:GetMana() >=  manacost) and Vector3.Distance2D(unitSelf:GetPosition(), unitTarget:GetPosition()) < skills.leap:GetRange() + skills.starstorm:GetRange() and facing < 0.3) then
     return 100
   end
   return 0
@@ -155,10 +166,19 @@ end
 local function ComboExecute(botBrain)
   
   --leap päälle, jos onnistuu, jatka
+  local unitSelf = core.unitSelf
+  local unitTarget = behaviorLib.heroTarget
+  
+  
+  
+  local facing = core.HeadingDifference(unitSelf, unitTarget:GetPosition())
+
+
   if skills.leap:CanActivate() then
     bCombo = true
+    core.OrderMoveToPos(botBrain, unitSelf, unitTarget:GetPosition())
     return core.OrderAbility(botBrain, skills.leap)
-  end
+end  
 
   if skills.starstorm:CanActivate() then 
     bCombo = false
