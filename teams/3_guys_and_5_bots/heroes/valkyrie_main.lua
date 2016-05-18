@@ -157,7 +157,7 @@ local function ComboUtility(botBrain)
   --jos starstorm valmiina ja lvl 3, leappaa päälle ja castaa se
   local manacost = (skills.leap:GetManaCost() + skills.starstorm:GetManaCost())
 
-  if (skills.starstorm:CanActivate() and skills.starstorm:GetLevel() >=3 and skills.leap:CanActivate() and (core.unitSelf:GetMana() >=  manacost) and Vector3.Distance2D(unitSelf:GetPosition(), unitTarget:GetPosition()) < skills.leap:GetRange() - skills.starstorm:GetRange() and facing < 0.3) then
+  if (skills.starstorm:CanActivate() and skills.starstorm:GetLevel() >=3 and skills.leap:CanActivate() and (core.unitSelf:GetMana() >=  manacost) and Vector3.Distance2D(unitSelf:GetPosition(), unitTarget:GetPosition()) < skills.leap:GetRange() + skills.starstorm:GetRange() and facing < 0.3) then
     return 100
   end
   return 0
