@@ -58,11 +58,10 @@ core.tLanePreferences = {Jungle = 0, Mid = 0, ShortSolo = 0, LongSolo = 0, Short
 --------------------------------
 -- table listing desired skillbuild. 0=Q(heal), 1=W(mana), 2=E(stun), 3=R(ulti), 4=AttributeBoost
 object.tSkills = {
-2,1,2,0,
-0,0,0,1,
-1,1,2,4,
-2,4,4,4,
-4,4,4,4,
+2, 1, 2, 0, 0,
+0, 0, 1, 1, 1,
+2, 4, 2, 4, 4,
+4,4,4,4,4,
 4,4,3,3,3
 }
 
@@ -77,7 +76,7 @@ function object:SkillBuild()
     skills.stun = unitSelf:GetAbility(2)
     skills.ulti = unitSelf:GetAbility(3)
     
-    if skills.abilEmeraldLightning and skills.abilPowerThrow and skills.abilDejaVu and skills.abilEmeraldRed then
+    if skills.heal and skills.mana and skills.stun and skills.ulti then
       bSkillsValid = true
     else
       return

@@ -56,42 +56,39 @@ core.tLanePreferences = {Jungle = 0, Mid = 5, ShortSolo = 0, LongSolo = 0, Short
 --------------------------------
 -- Skills
 --------------------------------
--- table listing desired skillbuild. 0=Q(dash), 1=W(vault), 2=E(slam), 3=R(ulti), 4=AttributeBoost
-object.tSkills = {
-0, 1, 1, 2, 1,
-3, 1, 2, 2, 2,
-3, 0, 0, 0, 4,
-3, 4, 4, 4, 4,
-4, 4, 4, 4, 4,
-}
-
 local bSkillsValid = false
 function object:SkillBuild()
-
   local unitSelf = self.core.unitSelf
 
   if not bSkillsValid then
-    skills.abilEmeraldLightning = unitSelf:GetAbility(0)
-    skills.abilPowerThrow = unitSelf:GetAbility(1)
-    skills.abilDejaVu = unitSelf:GetAbility(2)
-    skills.abilEmeraldRed = unitSelf:GetAbility(3)
-    
-    if skills.abilEmeraldLightning and skills.abilPowerThrow and skills.abilDejaVu and skills.abilEmeraldRed then
+    skills.dash = unitSelf:GetAbility(0)
+    skills.pole = unitSelf:GetAbility(1)
+    skills.rock = unitSelf:GetAbility(2)
+    skills.ulti = unitSelf:GetAbility(3)
+    skills.attributeBoost = unitSelf:GetAbility(4)
+
+    if skills.dash and skills.pole and skills.rock and skills.ulti and skills.attributeBoost then
       bSkillsValid = true
     else
       return
     end
   end
-  
+
   if unitSelf:GetAbilityPointsAvailable() <= 0 then
-        return
-    end
-   
-    local nlev = unitSelf:GetLevel()
-    local nlevpts = unitSelf:GetAbilityPointsAvailable()
-    for i = nlev, nlev+nlevpts do
-        unitSelf:GetAbility( object.tSkills[i] ):LevelUp()
-    end
+    return
+  end
+
+  if skills.ulti:CanLevelUp() then
+    skills.ulti:LevelUp()
+  elseif skills.dash:CanLevelUp() then
+    skills.dash:LevelUp()
+  elseif skills.pole:CanLevelUp() then
+    skills.pole:LevelUp()
+  elseif skills.rock:CanLevelUp() then
+    skills.rock:LevelUp()
+  else
+    skills.attributeBoost:LevelUp()
+  end
 end
 
 ------------------------------------------------------
