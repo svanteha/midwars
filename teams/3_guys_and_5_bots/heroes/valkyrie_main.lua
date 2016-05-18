@@ -138,6 +138,33 @@ object.oncombatevent = object.oncombateventOverride
   --return false
 --end
 
+
+local function RuneUtility(botBrain)
+local unitSelf = core.unitSelf
+local runePos = core.rune:GetPosition()
+
+local distanceToRune = Vector3.Distance2D(unitSelf:GetPosition(), runePos)
+
+if distanceToRune <1000 and core.rune != nil then
+  return 100
+end
+
+return 0
+end
+
+local function RuneExecute(botBrain)
+  
+return core.unitSelf:OrderMoveToPos(botBrain,unitSelf,runePos)
+
+  
+end
+
+local RuneBehavior = {}
+RuneBehavior["Utility"] = ComboUtility
+RuneBehavior["Execute"] = ComboExecute
+RuneBehavior["Name"] = "Taking the rune"
+tinsert(behaviorLib.tBehaviors, RuneBehavior)
+
 local bCombo = false
 local function ComboUtility(botBrain)
 
@@ -341,6 +368,14 @@ ArrowBehavior["Name"] = "Arrowing"
 tinsert(behaviorLib.tBehaviors, ArrowBehavior)
 
 
+behaviorLib.StartingItems = 
+        {"Item_HealthPotion", "Item_RunesOfTheBlight", "Item_MinorTotem", "Item_MinorTotem", "Item_DuckBoots", "Item_DuckBoots"}
+behaviorLib.LaneItems =
+        {"Item_Bottle", "Item_Marchers", "Item_Soulscream", "Item_EnhancedMarchers", "Item_Soulscream"} 
+behaviorLib.MidItems =
+        {"Item_WhisperingHelm", "Item_Wingbow"}
+behaviorLib.LateItems =
+        {"Item_LifeSteal4"} 
 
+BotEcho('finished loading devourer_main')
 
-BotEcho('finished loading valkyrie_main')
