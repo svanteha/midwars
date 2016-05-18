@@ -181,7 +181,6 @@ local function DetermineArrowTarget(arrow)
   for _, unitEnemy in pairs(tLocalEnemies) do
     local enemyPos = unitEnemy:GetPosition()
     local distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
-    core.DrawXPosition(enemyPos, "yellow", 50)
     if distanceEnemy < maxDistanceSq then
       if distanceEnemy < distanceTarget and generics.IsFreeLine(myPos, enemyPos) then
         unitTarget = unitEnemy
@@ -199,7 +198,7 @@ local function ArrowUtility(botBrain)
     local unitTarget = DetermineArrowTarget(javelin)
     if unitTarget then
       arrowTarget = unitTarget:GetPosition()
-      core.DrawXPosition(arrowTarget, "green", 50)
+
       return 60
     end
   end

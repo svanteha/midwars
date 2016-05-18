@@ -16,7 +16,6 @@ local generics = object.generics
 BotEcho("loading default generics ..")
 
 function generics.IsFreeLine(pos1, pos2)
-  core.DrawDebugLine(pos1, pos2, "yellow")
   local tAllies = core.CopyTable(core.localUnits["AllyUnits"])
   local tEnemies = core.CopyTable(core.localUnits["EnemyCreeps"])
   local distanceLine = Vector3.Distance2DSq(pos1, pos2)
@@ -29,7 +28,6 @@ function generics.IsFreeLine(pos1, pos2)
     local calc2 = calc * calc
     local actual = calc2 / distanceLine
     if actual < spaceBetween then
-      core.DrawXPosition(posAlly, "red", 25)
       return false
     end
   end
@@ -40,11 +38,9 @@ function generics.IsFreeLine(pos1, pos2)
     local calc2 = calc * calc
     local actual = calc2 / distanceLine
     if actual < spaceBetween then
-      core.DrawXPosition(posCreep, "red", 25)
       return false
     end
   end
-  core.DrawDebugLine(pos1, pos2, "green")
   return true
 end
 
