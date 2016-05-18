@@ -53,17 +53,55 @@ object.heroName = 'Hero_Devourer'
 --------------------------------
 core.tLanePreferences = {Jungle = 0, Mid = 5, ShortSolo = 0, LongSolo = 0, ShortSupport = 0, LongSupport = 0, ShortCarry = 0, LongCarry = 0}
 
+---------------------------------------------------
+--                   Utilities                   --
+---------------------------------------------------
+-- bonus aggression points if a skill/item is available for use
+object.hook = 20
+object.decay = 20
+object.ulti = 35
+-- bonus aggression points that are applied to the bot upon successfully using a skill/item
+object.holdUse = 20
+object.showUse = 20
+object.ultiUse = 35
+--thresholds of aggression the bot must reach to use these abilities
+object.hookThreshold = 22
+object.showThreshold = 22
+object.ultiThreshold = 37
+
+
+
+local function AbilitiesUpUtilityFn()
+        local val = 0
+ 
+        if skills.hook:CanActivate() then
+                val = val + object.hold
+        end
+ 
+        if skills.show:CanActivate() then
+                val = val + object.show
+        end
+ 
+        if skills.ulti:CanActivate() then
+                val = val + object.ulti
+        end
+ 
+        return val
+end
+
 --------------------------------
 -- Skills
 --------------------------------
 -- table listing desired skillbuild. 0=Q(hook), 1=W(rot), 2=E(passive), 3=R(ulti), 4=AttributeBoost
 object.tSkills = {
-0, 1, 0, 1, 0,
+1, 0, 0, 1, 0,
 3, 0, 1, 1, 2,
 3, 2, 2, 2, 4,
 3, 4, 4, 4, 4,
 4, 4, 4, 4, 4,
 }
+
+
 
 local bSkillsValid = false
 function object:SkillBuild()
@@ -71,12 +109,12 @@ function object:SkillBuild()
   local unitSelf = self.core.unitSelf
 
   if not bSkillsValid then
-    skills.abilEmeraldLightning = unitSelf:GetAbility(0)
-    skills.abilPowerThrow = unitSelf:GetAbility(1)
-    skills.abilDejaVu = unitSelf:GetAbility(2)
-    skills.abilEmeraldRed = unitSelf:GetAbility(3)
+    skills.hook = unitSelf:GetAbility(0)
+    skills.rot = unitSelf:GetAbility(1)
+    skills.skin = unitSelf:GetAbility(2)
+    skills.ulti = unitSelf:GetAbility(3)
     
-    if skills.abilEmeraldLightning and skills.abilPowerThrow and skills.abilDejaVu and skills.abilEmeraldRed then
+    if skills.hook and skills.rot and skills.skin and skills.ulti then
       bSkillsValid = true
     else
       return
@@ -94,6 +132,196 @@ function object:SkillBuild()
     end
 end
 
+local function IsFreeLine(pos1, pos2)
+  core.DrawDebugLine(pos1, pos2, "yellow")
+  local tAllies = core.CopyTable(core.localUnits["AllyUnits"])
+  local tEnemies = core.CopyTable(core.localUnits["EnemyCreeps"])
+  local distanceLine = Vector3.Distance2DSq(pos1, pos2)
+  local x1, x2, y1, y2 = pos1.x, pos2.x, pos1.y, pos2.y
+  local spaceBetween = 50 * 50
+  for _, ally in pairs(tAllies) do
+    local posAlly = ally:GetPosition()
+    local x3, y3 = posAlly.x, posAlly.y
+    local calc = x1*y2 - x2*y1 + x2*y3 - x3*y2 + x3*y1 - x1*y3
+    local calc2 = calc * calc
+    local actual = calc2 / distanceLine
+    if actual < spaceBetween then
+      core.DrawXPosition(posAlly, "red", 25)
+      return false
+    end
+  end
+  for _, creep in pairs(tEnemies) do
+    local posCreep = creep:GetPosition()
+    local x3, y3 = posCreep.x, posCreep.y
+    local calc = x1*y2 - x2*y1 + x2*y3 - x3*y2 + x3*y1 - x1*y3
+    local calc2 = calc * calc
+    local actual = calc2 / distanceLine
+    if actual < spaceBetween then
+      core.DrawXPosition(posCreep, "red", 25)
+      return false
+    end
+  end
+  core.DrawDebugLine(pos1, pos2, "green")
+  return true
+end
+
+local function DetermineHookTarget(hook)
+  local tLocalEnemies = core.CopyTable(core.localUnits["EnemyHeroes"])
+  local maxDistance = hook:GetRange()
+  local maxDistanceSq = maxDistance * maxDistance
+  local myPos = core.unitSelf:GetPosition()
+  local unitTarget = nil
+  local distanceTarget = 999999999
+  for _, unitEnemy in pairs(tLocalEnemies) do
+    local enemyPos = unitEnemy:GetPosition()
+    local distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
+    core.DrawXPosition(enemyPos, "yellow", 50)
+    if distanceEnemy < maxDistanceSq then
+      if distanceEnemy < distanceTarget and IsFreeLine(myPos, enemyPos) then
+        unitTarget = unitEnemy
+        distanceTarget = distanceEnemy
+      end
+    end
+  end
+  return unitTarget
+end
+
+local hookTarget = nil
+local function HookUtility(botBrain)
+  local hook = skills.hook
+  if hook and hook:CanActivate() then
+    local unitTarget = DetermineHookTarget(hook)
+    if unitTarget then
+      hookTarget = unitTarget:GetPosition()
+      core.DrawXPosition(hookTarget, "green", 50)
+      return 60
+    end
+  end
+  hookTarget = nil
+  return 0
+end
+local function HookExecute(botBrain)
+  local hook = skills.hook
+  if hook and hook:CanActivate() and hookTarget then
+    return core.OrderAbilityPosition(botBrain, hook, hookTarget)
+  end
+  return false
+end
+local HookBehavior = {}
+HookBehavior["Utility"] = HookUtility
+HookBehavior["Execute"] = HookExecute
+HookBehavior["Name"] = "Hooking"
+tinsert(behaviorLib.tBehaviors, HookBehavior)
+
+local RotEnableBehavior = {}
+local function HasEnemiesInRange(unit, range)
+  local enemies = core.CopyTable(core.localUnits["EnemyHeroes"])
+  local rangeSq = range * range
+  local myPos = unit:GetPosition()
+  for _, enemy in pairs(enemies) do
+    if Vector3.Distance2DSq(enemy:GetPosition(), myPos) < rangeSq then
+      return true
+    end
+  end
+  return false
+end
+local function RotEnableUtility(botBrain)
+  local rot = skills.rot
+  local rotRange = rot:GetTargetRadius()
+  local hasEffect = core.unitSelf:HasState("State_Devourer_Ability2_Self")
+  local hasEnemiesClose = HasEnemiesInRange(core.unitSelf, rotRange)
+  if rot:CanActivate() and hasEnemiesClose and not hasEffect then
+    return 50
+  end
+  return 0
+end
+local function RotEnableExecute(botBrain)
+  local rot = skills.rot
+  if rot and rot:CanActivate() then
+    return core.OrderAbility(botBrain, rot)
+  end
+  return false
+end
+RotEnableBehavior["Utility"] = RotEnableUtility
+RotEnableBehavior["Execute"] = RotEnableExecute
+RotEnableBehavior["Name"] = "Rot enable"
+tinsert(behaviorLib.tBehaviors, RotEnableBehavior)
+
+local RotDisableBehavior = {}
+local function RotDisableUtility(botBrain)
+  local rot = skills.rot
+  local rotRange = rot:GetTargetRadius()
+  local hasEffect = core.unitSelf:HasState("State_Devourer_Ability2_Self")
+  local hasEnemiesClose = HasEnemiesInRange(core.unitSelf, rotRange)
+  if rot:CanActivate() and hasEffect and not hasEnemiesClose then
+    --muutin tätä oli ennen 1000
+    return 0
+  end
+  return 0
+end
+local function RotDisableExecute(botBrain)
+  local rot = skills.rot
+  if rot and rot:CanActivate() then
+    return core.OrderAbility(botBrain, rot)
+  end
+  return false
+end
+RotDisableBehavior["Utility"] = RotDisableUtility
+RotDisableBehavior["Execute"] = RotDisableExecute
+RotDisableBehavior["Name"] = "Rot disable"
+tinsert(behaviorLib.tBehaviors, RotDisableBehavior)
+
+-- Harass general. Heron agressiivisuus luku: isompi luku -> vihasempi kaveri. Tähän voi määrittää logiikkaa agressiivisuudelle
+local function CustomHarassUtilityOverride(hero)
+  local nUtility = 0
+  return 1000000
+end
+behaviorLib.CustomHarassUtility = CustomHarassUtilityOverride
+
+-- Harass hero
+local function HarassHeroExecuteOverride(botBrain)
+  local unitTarget = behaviorLib.heroTarget
+  if unitTarget == nil or not unitTarget:IsValid() then
+    return false --can not execute, move on to the next behavior
+  end
+
+  local unitSelf = core.unitSelf
+
+  if unitSelf:IsChanneling() then
+    return
+  end
+
+  local bActionTaken = false
+
+  --since we are using an old pointer, ensure we can still see the target for entity targeting
+  if core.CanSeeUnit(botBrain, unitTarget) then
+    local dist = Vector3.Distance2D(unitSelf:GetPosition(), unitTarget:GetPosition())
+    local attkRange = core.GetAbsoluteAttackRangeToUnit(unitSelf, unitTarget);
+
+    local itemGhostMarchers = core.itemGhostMarchers
+
+    local ulti = skills.ulti
+    local ultiRange = ulti and (ulti:GetRange() + core.GetExtraRange(unitSelf) + core.GetExtraRange(unitTarget)) or 0
+
+    local bUseUlti = true
+
+    if ulti and ulti:CanActivate() and bUseUlti and dist < ultiRange then
+      bActionTaken = core.OrderAbilityEntity(botBrain, ulti, unitTarget)
+    elseif (ulti and ulti:CanActivate() and bUseUlti and dist > ultiRange) then
+      --move in when we want to ult
+      local desiredPos = unitTarget:GetPosition()
+      core.OrderMoveToPosClamp(botBrain, unitSelf, desiredPos, false)
+      bActionTaken = true
+    end
+  end
+
+  if not bActionTaken then
+    return object.harassExecuteOld(botBrain)
+  end
+end
+object.harassExecuteOld = behaviorLib.HarassHeroBehavior["Execute"]
+behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
+
 ------------------------------------------------------
 --            onthink override                      --
 -- Called every bot tick, custom onthink code here  --
@@ -102,8 +330,32 @@ end
 -- @return: none
 function object:onthinkOverride(tGameVariables)
   self:onthinkOld(tGameVariables)
-
+  if behaviorLib.nitCurrentTarget ~= nil then
+    core.BotEcho(unitCurrentTarget)
+  end
   -- custom code here
+  -- lvl 1 rot, agroo aika lujaa 
+  --core.BotEcho()
+  local rot = skills.rot
+  local tLocalEnemies = core.CopyTable(core.localUnits["EnemyHeroes"])
+  local myPos = core.unitSelf:GetPosition()
+  local distanceEnemy = -1
+  for _, unitEnemy in pairs(tLocalEnemies) do
+    local enemyPos = unitEnemy:GetPosition()
+    distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
+  end
+  --RotEnableExecute(self)
+  --enemy spotted! eli harassheroexecute on paikka missä määritellään logiikkaa vastustajan häiriköinnille ja miten se tekee niit skillei tjsp. ja tuo 
+  --CustomHarassUtilityOverride luku joka laittaa sen agroo. eli esim. semmosta ois hyvä kokeilla aluks että
+  --se käyttäs kakkosskillii ja hakkais autoättäkeillä sitä vihuu suht innokkaasti. sit vois kokeilla semmosta että se koittas hookata vihuu ja jos osuu ni kakkosskilli päälle ->
+  --sen aggressiivisuus nostetaan hetkellisesti iha älyttömän isoks ni se jahtaa sit sen kuoliaaks
+  if distanceEnemy > 0 then
+    
+  end
+
+
+
+
 end
 object.onthinkOld = object.onthink
 object.onthink = object.onthinkOverride
@@ -119,9 +371,12 @@ function object:oncombateventOverride(EventData)
 
   -- custom code here
 end
+
 -- override combat event trigger function.
 object.oncombateventOld = object.oncombatevent
 object.oncombatevent = object.oncombateventOverride
+
+
 
 --items
 behaviorLib.StartingItems = {"Item_IronBuckler", "Item_RunesOfTheBlight", "Item_ManaBattery"}
