@@ -127,7 +127,7 @@ object.oncombateventOld = object.oncombatevent
 object.oncombatevent = object.oncombateventOverride
 
 -- Harass
-local function CustomHarassUtilityOverride(hero)
+local function CustomHarassUtilityOverride(target)
   local nUtility = 0
 
   if skills.hook:CanActivate() then
@@ -138,7 +138,7 @@ local function CustomHarassUtilityOverride(hero)
     nUtility = nUtility + 40
   end
 
-  return nUtility
+  return generics.CustomHarassUtility(target) + nUtility
 end
 behaviorLib.CustomHarassUtility = CustomHarassUtilityOverride
 

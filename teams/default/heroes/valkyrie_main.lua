@@ -136,34 +136,9 @@ function behaviorLib.CustomRetreatExecute(botBrain)
 end
 
 local function CustomHarassUtilityFnOverride(target)
-  local nUtil = 0
-  local creepLane = core.GetFurthestCreepWavePos(core.tMyLane, core.bTraverseForward)
-  local myPos = core.unitSelf:GetPosition()
+  local nUtility = 0
 
-  --jos potu käytössä niin ei agroilla
-  if core.unitSelf:HasState(core.idefHealthPotion.stateName) then
-    return -100
-  end
-
-  --jos tornin rangella ni ei mennä
-  if core.GetClosestEnemyTower(myPos, 720) then
-    return -100
-  end
-
-  if core.unitSelf:GetHealthPercent() < 0.3 then
-     return -100
-  end
-
-  local unitsNearby = core.AssessLocalUnits(object, myPos,100)
-  for id, creep in pairs(unitsNearby.EnemyCreeps) do
-    local creepPos = creep:GetPosition()
-    if(creep:GetAttackType() == "ranged" or Vector3.Distance2D(myPos, creepPos) < 20) then
-      core.DrawXPosition(creepPos)
-      return -100
-    end 
-  end
-
-  return 0
+  return generics.CustomHarassUtility(target) + nUtility
 end
 behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride
 
