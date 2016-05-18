@@ -188,7 +188,7 @@ function behaviorLib.CustomRetreatExecute(botBrain)
 	return false
 end
 
-local function CustomHarassUtilityOverride(hero)
+local function CustomHarassUtilityOverride(target)
   local nUtility = 0
 
   if skills.dash:CanActivate() then
