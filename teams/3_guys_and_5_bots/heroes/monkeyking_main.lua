@@ -104,9 +104,6 @@ function object:onthinkOverride(tGameVariables)
   self:onthinkOld(tGameVariables)
 
   -- custom code here
-if skills.dash:CanActivate() then
-   core.OrderAbility(self, skills.dash)
-end
 end
 object.onthinkOld = object.onthink
 object.onthink = object.onthinkOverride
@@ -125,5 +122,75 @@ end
 -- override combat event trigger function.
 object.oncombateventOld = object.oncombatevent
 object.oncombatevent = object.oncombateventOverride
+
+local function DetermineClosestEnemy(skill) 
+  local tLocalEnemies = core.CopyTable(core.localUnits["EnemyHeroes"])
+  local maxDistance = skill:GetRange()
+  local maxDistanceSq = maxDistance * maxDistance
+  local myPos = core.unitSelf:GetPosition()
+  local unitTarget = nil
+  local distanceTarget = 9999999
+  for _, unitEnemy in pairs(tLocalEnemies) do
+    local enemyPos = unitEnemy:GetPosition()
+    local distanceEnemy = Vector3.Distance2dSq(myPos, enemyPos)
+    if distanceEnemy < maxDistanceSq then
+      if distanceEnemy < distanceTarget then
+        unitTarget = unitEnemy
+        distanceTarget = distanceEnemy
+      end
+    end
+  end
+  return unitTarget
+end
+
+local function ComboUtility(botBrain)
+  local dash = skills.dash
+  local vault = skills.vault
+  local heroTarget = behaviorLib.heroTarget
+  local manacost = dash:GetManaCost() + vault:GetManaCost()
+  if dash:CanActivate() and vault:CanActivate() and heroTarget and core.unitSelf:GetMana() >= manacost then 
+    core.BotEcho("We have mana and skills and target")
+    local maxDistance = dash:GetRange()
+    local maxDistanceSq = maxDistance * maxDistance
+    local myPos = core.unitSelf:GetPosition()
+    local enemyPos = heroTarget:GetPosition()
+    local distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
+    if distanceEnemy < maxDistanceSq then
+      core.BotEcho("CO-CO-COMBOO")
+      return 100
+    end
+  end
+  return 0
+end
+
+local function ComboExecute(botBrain)
+  local dash = skills.dash
+  local vault = skills.vault
+  local slam = skills.slam
+  local heroTarget = behaviorLib.heroTarget
+  local myUnit = core.unitSelf
+  if heroTarget then
+    core.OrderMoveToPos(botBrain, myUnit, heroTarget:GetPosition())
+    core.OrderAbility(botBrain, dash)
+    core.OrderAbilityEntity(botBrain, vault, heroTarget)
+    core.OrderMoveToPos(botBrain, myUnit, heroTarget:GetPosition())
+    core.OrderMoveToPos(botBrain, myUnit, heroTarget:GetPosition())
+    core.OrderMoveToPos(botBrain, myUnit, heroTarget:GetPosition())
+    core.OrderMoveToPos(botBrain, myUnit, heroTarget:GetPosition())
+    core.OrderMoveToPos(botBrain, myUnit, heroTarget:GetPosition())
+    core.OrderMoveToPos(botBrain, myUnit, heroTarget:GetPosition())
+    if dash:CanActivate() and vault:CanActivate() then 
+      core.OrderAbility(botBrain, dash)
+      core.OrderAbilityEntity(botBrain, vault, heroTarget)
+    end
+  end
+end
+
+
+local ComboBehavior = {}
+ComboBehavior["Utility"] = ComboUtility
+ComboBehavior["Execute"] = ComboExecute
+ComboBehavior["Name"] = "Combo like a motherfucker"
+tinsert(behaviorLib.tBehaviors, ComboBehavior)
 
 BotEcho('finished loading monkeyking_main')
