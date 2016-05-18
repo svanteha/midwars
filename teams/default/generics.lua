@@ -54,13 +54,10 @@ function generics.CustomHarassUtility(target)
   local unitSelf = core.unitSelf
   local myPos = unitSelf:GetPosition()
 
-  if unitSelf:GetHealthPercent() < 0.3 then
-     nUtil = nUtil - 10
-  end
-  
+  nUtil = nUtil - (1 - unitSelf:GetHealthPercent()) * 100
 
   if unitSelf:GetHealth() > target:GetHealth() then
-     nUtil = nUtil + 20
+     nUtil = nUtil + 10
   end
   
   if target:IsChanneling() or target:IsDisarmed() or target:IsImmobilized() or target:IsPerplexed() or target:IsSilenced() or target:IsStunned() or unitSelf:IsStealth() then
@@ -70,7 +67,7 @@ function generics.CustomHarassUtility(target)
   local unitsNearby = core.AssessLocalUnits(object, myPos,100)
   
   
-  if #unitsNearby.AllyHeroes == 0 then
+  if core.NumberElements(unitsNearby.AllyHeroes) == 0 then
   
     if core.GetClosestEnemyTower(myPos, 720) then
       nUtil = nUtil - 100
@@ -79,7 +76,6 @@ function generics.CustomHarassUtility(target)
     for id, creep in pairs(unitsNearby.EnemyCreeps) do
       local creepPos = creep:GetPosition()
       if(creep:GetAttackType() == "ranged" or Vector3.Distance2D(myPos, creepPos) < 20) then
-        core.DrawXPosition(creepPos)
         nUtil = nUtil - 20
       end 
     end

@@ -129,7 +129,7 @@ function behaviorLib.CustomRetreatExecute(botBrain)
   local unitsNearby = core.AssessLocalUnits(botBrain, unitSelf:GetPosition(), 500)
   
 
-  if unitSelf:GetHealthPercent() < 0.3 and #unitsNearby.EnemyHeroes and leap and leap:CanActivate() and angle < 0.5 then
+  if unitSelf:GetHealthPercent() < 0.3 and core.NumberElements(unitsNearby.EnemyHeroes) > 0 and leap and leap:CanActivate() and angle < 0.5 then
     return core.OrderAbility(botBrain, leap)
   end
   return false
@@ -144,7 +144,6 @@ behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride
 
 local function HarassHeroExecuteOverride(botBrain)
   local unitTarget = behaviorLib.heroTarget
-
   if unitTarget == nil or not unitTarget:IsValid() then
     return false --can not execute, move on to the next behavior
   end

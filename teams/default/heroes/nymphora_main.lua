@@ -122,15 +122,13 @@ object.oncombateventOld = object.oncombatevent
 object.oncombatevent = object.oncombateventOverride
 
 local function HarassHeroExecuteOverride(botBrain)
-
   local unitTarget = behaviorLib.heroTarget
-  if unitTarget == nil then
-    return core.harassExecuteOld(botBrain)
+  if unitTarget == nil or not unitTarget:IsValid() then
+    return false --can not execute, move on to the next behavior
   end
 
   local unitSelf = core.unitSelf
   local nTargetDistanceSq = Vector3.Distance2DSq(unitSelf:GetPosition(), unitTarget:GetPosition())
-  local nLastHarassUtility = behaviorLib.lastHarassUtil
 
   local bActionTaken = false
 

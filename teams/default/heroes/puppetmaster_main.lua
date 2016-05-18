@@ -123,9 +123,54 @@ object.oncombatevent = object.oncombateventOverride
 
 local function CustomHarassUtilityFnOverride(target)
   local nUtility = 0
+  
+  if skills.show:CanActivate() then
+    nUtility = nUtility + 10
+  end
+
+  if skills.hold:CanActivate() then
+    nUtility = nUtility + 10
+  end
 
   return generics.CustomHarassUtility(target) + nUtility
 end
 behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride
+
+local function HarassHeroExecuteOverride(botBrain)
+  local unitTarget = behaviorLib.heroTarget
+  if unitTarget == nil or not unitTarget:IsValid() then
+    return false --can not execute, move on to the next behavior
+  end
+  
+  local unitSelf = core.unitSelf
+  local bActionTaken = false
+
+  if core.CanSeeUnit(botBrain, unitTarget) then
+  
+    local nTargetDistanceSq = Vector3.Distance2DSq(unitSelf:GetPosition(), unitTarget:GetPosition())
+    
+    local hold = skills.hold
+    local nRange = hold:GetRange()
+    if hold:CanActivate() and nTargetDistanceSq < (nRange * nRange) then
+      bActionTaken = core.OrderAbilityEntity(botBrain, hold, unitTarget)
+    end
+    
+    local show = skills.show
+    nRange = show:GetRange()
+    local unitsNearby = core.AssessLocalUnits(botBrain, unitTarget, 400)
+    
+    local nEnemies = core.NumberElements(unitsNearby.Enemies)
+
+    if not bActionTaken and show:CanActivate() and nTargetDistanceSq < (nRange * nRange) and nEnemies > 0 then
+      bActionTaken = core.OrderAbilityEntity(botBrain, show, unitTarget)
+    end
+  end
+
+  if not bActionTaken then
+    return core.harassExecuteOld(botBrain)
+  end
+end
+core.harassExecuteOld = behaviorLib.HarassHeroBehavior["Execute"]
+behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
 
 BotEcho('finished loading puppetmaster_main')
