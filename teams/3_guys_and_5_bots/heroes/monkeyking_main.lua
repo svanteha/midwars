@@ -248,7 +248,7 @@ local function SlamUtility(botBrain)
   local dash = skills.dash
   local vault = skills.vault
   local myMana = core.unitSelf:GetMana()
-  local fullMana = slam:GetManaCost() + dash:GetManaCost() + vault:GetManaCost()
+  local fullMana = slam:GetManaCost() + dash:GetManaCost() + vault:GetManaCost() + 100
   if myMana > fullMana and slam:GetLevel() > 2 and slam:CanActivate() then
     local target = GetClosestCreep()
     if target then
