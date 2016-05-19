@@ -203,4 +203,44 @@ ManaBehavior["Execute"] = ManaExecute
 ManaBehavior["Name"] = "Mana"
 tinsert(behaviorLib.tBehaviors, ManaBehavior)
 
+
+local healTarget = nil
+local function FindHealTarget(botBrain, heal)
+  local range = heal:GetRange()
+  local unitsNearby = core.AssessLocalUnits(botBrain, core.unitSelf, range)
+  local heroes = unitsNearby.AllyHeroes
+  tinsert(heroes, core.unitSelf)
+  local target = nil
+  local missing = 0
+  for _, hero in pairs(heroes) do
+    local curMissing = 1 - hero:GetHealthPercent()
+    if curMissing > missing then
+      missing = curMissing
+      target = hero
+    end
+  end
+  return target
+end
+local function HealUtility(botBrain)
+  local heal = skills.heal
+  healTarget = FindManaTarget(botBrain, heal)
+  if heal:CanActivate() and healTarget then
+     return 50
+  end
+  return 0
+end
+
+local function HealExecute(botBrain)
+  local heal = skills.heal
+  if heal and heal:CanActivate() then
+    return core.OrderAbilityPosition(botBrain, heal, healTarget:GetPosition())
+  end
+  return false
+end
+local HealBehavior = {}
+HealBehavior["Utility"] = HealUtility
+HealBehavior["Execute"] = HealExecute
+HealBehavior["Name"] = "Mana"
+tinsert(behaviorLib.tBehaviors, HealBehavior)
+
 BotEcho('finished loading nymphora_main')
