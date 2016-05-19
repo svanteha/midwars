@@ -15,6 +15,26 @@ local generics = object.generics
 
 BotEcho("loading default generics ..")
 
+local oncombateventOld = object.oncombatevent
+local function oncombateventCustom(botBrain, EventData)
+  oncombateventOld(botBrain, EventData)
+  local source = EventData.SourceUnit
+  local target = EventData.TargetUnit
+  local teamBotBrain = core.teamBotBrain
+  local unitSelf = core.unitSelf
+  if teamBotBrain and teamBotBrain.SetTeamTarget then
+    if source and source:IsHero() and source:IsAlive() and source:GetTeam() == core.enemyTeam and unitSelf and unitSelf:GetPosition() and source:GetPosition() and Vector3.Distance2D(unitSelf:GetPosition(), source:GetPosition()) < 500 then
+      teamBotBrain:SetTeamTarget(source)
+    end
+    if target and target:IsHero() and target:IsAlive() and target:GetTeam() == core.enemyTeam and unitSelf and unitSelf:GetPosition() and target:GetPosition() and Vector3.Distance2D(unitSelf:GetPosition(), target:GetPosition()) < 500 then
+      teamBotBrain:SetTeamTarget(target)
+    end
+  end
+end
+-- override combat event trigger function.
+
+object.oncombatevent = oncombateventCustom
+
 behaviorLib.nPathEnemyTowerMul = 100
 
 local function PassiveState()

@@ -3,6 +3,8 @@ local object = _G.object
 
 runfile 'bots/teambot/teambotbrain.lua'
 
+local core = object.core
+
 object.myName = 'Default Team'
 
 ------------------------------------------------------
@@ -33,5 +35,12 @@ function object:GetTeamTarget()
 end
 
 function object:SetTeamTarget(target)
+  local old = self:GetTeamTarget()
+  if old then
+    local basePos = core.allyMainBaseStructure:GetPosition()
+    if Vector3.Distance2D(basePos, old:GetPosition()) < Vector3.Distance2D(basePos, target:GetPosition()) then
+      return
+    end
+  end
   unitTeamTarget = target
 end

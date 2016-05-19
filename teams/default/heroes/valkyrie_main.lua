@@ -123,17 +123,17 @@ object.onthink = object.onthinkOverride
 function object:oncombateventOverride(EventData)
   self:oncombateventOld(EventData)
 
-  local addBonus = 0
   if EventData.Type == "Attack" then
     local unitTarget = EventData.TargetUnit
     if EventData.InflictorName == "Projectile_Valkyrie_Ability2" and unitTarget:IsHero() then
-      addBonus = addBonus + 50
+      local teamBotBrain = core.teamBotBrain
+      if teamBotBrain.SetTeamTarget then
+        teamBotBrain:SetTeamTarget(unitTarget)
+      end
+      core.AllChat("*BOOM* Skill shot!")
     end
   end
 
-  if addBonus > 0 then
-    core.nHarassBonus = core.nHarassBonus + addBonus
-  end
 end
 -- override combat event trigger function.
 object.oncombateventOld = object.oncombatevent
