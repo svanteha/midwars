@@ -16,11 +16,11 @@ http://tkt-hon.github.io/midwars/
     Alias "team_default_hellbourne" "set teambotmanager_hellbourne 3_guys_and_5_bots; AddBot 2 3_guys_and_5_bots_Devourer_test; AddBot 2 3_guys_and_5_bots_MonkeyKing_test; AddBot 2 3_guys_and_5_bots_Nymphora_test; AddBot 2 3_guys_and_5_bots_PuppetMaster_test; AddBot 2 3_guys_and_5_bots_Valkyrie_test"
 
 ### Load single bot made by us
-    Alias "monkeyking_add" "set teambotmanager_hellbourne 3_guys_and_5_bots; AddBot 1 3_guys_and_5_bots_MonkeyKing;
-    Alias "devourer_add" "set teambotmanager_hellbourne 3_guys_and_5_bots; AddBot 1 3_guys_and_5_bots_Devourer;
-    Alias "valkyrie_add" "set teambotmanager_hellbourne 3_guys_and_5_bots; AddBot 1 3_guys_and_5_bots_Valkyrie;
-    Alias "nymphora_add" "set teambotmanager_hellbourne 3_guys_and_5_bots; AddBot 1 3_guys_and_5_bots_Nymphora;
-    Alias "puppetmaster_add" "set teambotmanager_hellbourne 3_guys_and_5_bots; AddBot 1 3_guys_and_5_bots_PuppetMaster;
+    Alias "monkeyking_add" "set teambotmanager_legion 3_guys_and_5_bots; AddBot 1 3_guys_and_5_bots_MonkeyKing;
+    Alias "devourer_add" "set teambotmanager_legion 3_guys_and_5_bots; AddBot 1 3_guys_and_5_bots_Devourer;
+    Alias "valkyrie_add" "set teambotmanager_legion 3_guys_and_5_bots; AddBot 1 3_guys_and_5_bots_Valkyrie;
+    Alias "nymphora_add" "set teambotmanager_legion 3_guys_and_5_bots; AddBot 1 3_guys_and_5_bots_Nymphora;
+    Alias "puppetmaster_add" "set teambotmanager_legion 3_guys_and_5_bots; AddBot 1 3_guys_and_5_bots_PuppetMaster;
 
 ### Load enemy bot from defaults
 
