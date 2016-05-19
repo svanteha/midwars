@@ -56,20 +56,22 @@ local function PassiveState()
   return false
 end
 
-function generics.IsFreeLine(pos1, pos2)
+function generics.IsFreeLine(pos1, pos2, ignoreAllies)
   local tAllies = core.CopyTable(core.localUnits["AllyUnits"])
   local tEnemies = core.CopyTable(core.localUnits["EnemyCreeps"])
   local distanceLine = Vector3.Distance2DSq(pos1, pos2)
   local x1, x2, y1, y2 = pos1.x, pos2.x, pos1.y, pos2.y
   local spaceBetween = 50 * 50
-  for _, ally in pairs(tAllies) do
-    local posAlly = ally:GetPosition()
-    local x3, y3 = posAlly.x, posAlly.y
-    local calc = x1*y2 - x2*y1 + x2*y3 - x3*y2 + x3*y1 - x1*y3
-    local calc2 = calc * calc
-    local actual = calc2 / distanceLine
-    if actual < spaceBetween then
-      return false
+  if not ignoreAllies then
+    for _, ally in pairs(tAllies) do
+      local posAlly = ally:GetPosition()
+      local x3, y3 = posAlly.x, posAlly.y
+      local calc = x1*y2 - x2*y1 + x2*y3 - x3*y2 + x3*y1 - x1*y3
+      local calc2 = calc * calc
+      local actual = calc2 / distanceLine
+      if actual < spaceBetween then
+        return false
+      end
     end
   end
   for _, creep in pairs(tEnemies) do

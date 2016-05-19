@@ -245,6 +245,15 @@ local function DetermineHookTarget(hook)
   local maxDistance = hook:GetRange()
   local maxDistanceSq = maxDistance * maxDistance
   local myPos = core.unitSelf:GetPosition()
+  local teamBotBrain = core.teamBotBrain
+  if teamBotBrain.GetTeamTarget then
+    local teamTarget = teamBotBrain:GetTeamTarget()
+    if teamTarget then
+      if generics.IsFreeLine(myPos, teamTarget:GetPosition()) then
+        return teamTarget
+      end
+    end
+  end
   local unitTarget = nil
   local distanceTarget = 999999999
   for _, unitEnemy in pairs(tLocalEnemies) do
