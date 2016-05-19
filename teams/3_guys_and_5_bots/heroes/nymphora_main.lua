@@ -104,7 +104,6 @@ end
 -- @return: none
 function object:onthinkOverride(tGameVariables)
   self:onthinkOld(tGameVariables)
-
   -- custom code here
 end
 object.onthinkOld = object.onthink
@@ -124,5 +123,56 @@ end
 -- override combat event trigger function.
 object.oncombateventOld = object.oncombatevent
 object.oncombatevent = object.oncombateventOverride
+
+local function ComboUtility(botBrain)
+  local heal = skills.heal
+  local stun = skills.stun
+  local heroTarget = behaviorLib.heroTarget
+  local manacost = heal:GetManaCost() + stun:GetManaCost()
+  if heal:CanActivate() and stun:CanActivate() and heroTarget and core.unitSelf:GetMana() >= manacost then 
+    local maxDistance = stun:GetRange()
+    local maxDistanceSq = maxDistance * maxDistance
+    local myPos = core.unitSelf:GetPosition()
+    local enemyPos = core.unitSelf:GetPosition()
+    local distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
+    if distanceEnemy < maxDistanceSq then
+      return 100;
+    end
+  end
+  return 0;
+end
+
+local function ComboExecute(botBrain)
+  local heal = skills.heal
+  local stun = skills.stun
+  local mana = skills.mana
+  local heroTarget = behaviorLib.heroTarget
+  local myUnit = core.unitSelf
+  if heroTarget then 
+    core.OrderAbilityPosition(botBrain, stun, heroTarget:GetPosition())
+    core.OrderAbilityPosition(botBrain, heal, heroTarget:GetPosition())
+  end
+  core.OrderAbilityEntity(botBrain, mana, myUnit)
+end
+local ComboBehavior = {}
+ComboBehavior["Utility"] = ComboUtility
+ComboBehavior["Execute"] = ComboExecute
+ComboBehavior["Name"] = "Combo like a motherfucker"
+tinsert(behaviorLib.tBehaviors, ComboBehavior)
+
+
+
+
+
+
+--items
+behaviorLib.StartingItems = {"Item_MinorTotem", "Item_MinorTotem", "Item_HealthPotion", "Item_MarkOfTheNovice"}
+behaviorLib.LaneItems =
+        {"Item_Bottle", "Item_Intelligence5", "Item_Marchers", "Item_Intelligence5"} -- Shield2 is HotBL
+        behaviorLib.MidItems =
+        {"Item_EnhancedMarchers", "Item_GraveLocket" , "Item_Lightning1"}
+        behaviorLib.LateItems =
+        {"Item_Protect", "Item_ArclightCrown"}
+
 
 BotEcho('finished loading nymphora_main')
