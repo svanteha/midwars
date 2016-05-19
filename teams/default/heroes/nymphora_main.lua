@@ -164,10 +164,27 @@ local function CustomHarassUtilityFnOverride(target)
 end
 behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride
 
-
+local manaTarget = nil
+local function FindManaTarget(botBrain, mana)
+  local range = mana:GetRange()
+  local unitsNearby = core.AssessLocalUnits(botBrain, core.unitSelf, range)
+  local heroes = unitsNearby.AllyHeroes
+  tinsert(heroes, core.unitSelf)
+  local target = nil
+  local missing = 0
+  for _, hero in pairs(heroes) do
+    local curMissing = 1 - hero:GetManaPercent()
+    if curMissing > missing then
+      missing = curMissing
+      target = hero
+    end
+  end
+  return target
+end
 local function ManaUtility(botBrain)
   local mana = skills.mana
-  if mana:CanActivate() and core.unitSelf:GetManaPercent() < 1 then
+  manaTarget = FindManaTarget(botBrain, mana)
+  if mana:CanActivate() and manaTarget then
      return 50
   end
   return 0
@@ -176,7 +193,7 @@ end
 local function ManaExecute(botBrain)
   local mana = skills.mana
   if mana and mana:CanActivate() then
-    return core.OrderAbilityEntity(botBrain, mana, core.unitSelf)
+    return core.OrderAbilityEntity(botBrain, mana, manaTarget)
   end
   return false
 end
