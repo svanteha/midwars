@@ -16,7 +16,7 @@ local generics = object.generics
 BotEcho("loading default generics ..")
 
 behaviorLib.tRuneToPick = nil
-behaviorLib.nRuneGrabRange = 1200
+behaviorLib.nRuneGrabRange = 2000
 -- 30 if there is rune within 1000 and we see it
 local function PickRuneUtilityOverride(botBrain)
   local rune = core.teamBotBrain.GetNearestRune(core.unitSelf:GetPosition(), true)
