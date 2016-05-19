@@ -37,9 +37,9 @@ runfile "bots/behaviorLib.lua"
 local core, eventsLib, behaviorLib, metadata, skills = object.core, object.eventsLib, object.behaviorLib, object.metadata, object.skills
 
 local print, ipairs, pairs, string, table, next, type, tinsert, tremove, tsort, format, tostring, tonumber, strfind, strsub
-  = _G.print, _G.ipairs, _G.pairs, _G.string, _G.table, _G.next, _G.type, _G.table.insert, _G.table.remove, _G.table.sort, _G.string.format, _G.tostring, _G.tonumber, _G.string.find, _G.string.sub
+= _G.print, _G.ipairs, _G.pairs, _G.string, _G.table, _G.next, _G.type, _G.table.insert, _G.table.remove, _G.table.sort, _G.string.format, _G.tostring, _G.tonumber, _G.string.find, _G.string.sub
 local ceil, floor, pi, tan, atan, atan2, abs, cos, sin, acos, max, random
-  = _G.math.ceil, _G.math.floor, _G.math.pi, _G.math.tan, _G.math.atan, _G.math.atan2, _G.math.abs, _G.math.cos, _G.math.sin, _G.math.acos, _G.math.max, _G.math.random
+= _G.math.ceil, _G.math.floor, _G.math.pi, _G.math.tan, _G.math.atan, _G.math.atan2, _G.math.abs, _G.math.cos, _G.math.sin, _G.math.acos, _G.math.max, _G.math.random
 
 local BotEcho, VerboseLog, BotLog = core.BotEcho, core.VerboseLog, core.BotLog
 local Clamp = core.Clamp
@@ -72,21 +72,21 @@ object.ultiThreshold = 37
 
 
 local function AbilitiesUpUtilityFn()
-        local val = 0
- 
-        if skills.hook:CanActivate() then
-                val = val + object.hold
-        end
- 
-        if skills.rot:CanActivate() then
-                val = val + object.show
-        end
- 
-        if skills.ulti:CanActivate() then
-                val = val + object.ulti
-        end
- 
-        return val
+  local val = 0
+
+  if skills.hook:CanActivate() then
+    val = val + object.hold
+  end
+
+  if skills.rot:CanActivate() then
+    val = val + object.show
+  end
+
+  if skills.ulti:CanActivate() then
+    val = val + object.ulti
+  end
+
+  return val
 end
 
 --------------------------------
@@ -122,14 +122,14 @@ function object:SkillBuild()
   end
   
   if unitSelf:GetAbilityPointsAvailable() <= 0 then
-        return
-    end
-   
-    local nlev = unitSelf:GetLevel()
-    local nlevpts = unitSelf:GetAbilityPointsAvailable()
-    for i = nlev, nlev+nlevpts do
-        unitSelf:GetAbility( object.tSkills[i] ):LevelUp()
-    end
+    return
+  end
+
+  local nlev = unitSelf:GetLevel()
+  local nlevpts = unitSelf:GetAbilityPointsAvailable()
+  for i = nlev, nlev+nlevpts do
+    unitSelf:GetAbility( object.tSkills[i] ):LevelUp()
+  end
 end
 
 local function IsFreeLine(pos1, pos2)
@@ -278,96 +278,13 @@ local function UltiUtility(botBrain)
   local ulti = skills.ulti
   -- Tarkista tornirange jossain vaiheessa 
   if ulti:CanActivate() and ulti:GetManaCost() < core.unitSelf:GetMana() then
-    return 100
+    return 0
   end
   return 0
 end
 
 local function UltiExecute(botBrain)
-local hook = skills.hook
-local unitTarget = behaviorLib.heroTarget
-  if unitTarget == nil or not unitTarget:IsValid() then
-    return false --can not execute, move on to the next behavior
-  end
-
-  local unitSelf = core.unitSelf
-
-  if unitSelf:IsChanneling() then
-    return
-  end
-
-  local bActionTaken = false
-
-  --since we are using an old pointer, ensure we can still see the target for entity targeting
-  if core.CanSeeUnit(botBrain, unitTarget) then
-    local dist = Vector3.Distance2D(unitSelf:GetPosition(), unitTarget:GetPosition())
-    local attkRange = core.GetAbsoluteAttackRangeToUnit(unitSelf, unitTarget);
-
-    local itemGhostMarchers = core.itemGhostMarchers
-
-    local ulti = skills.ulti
-    local ultiRange = ulti and (ulti:GetRange() + core.GetExtraRange(unitSelf) + core.GetExtraRange(unitTarget)) or 0
-
-    local bUseUlti = true
-
-    if ulti and ulti:CanActivate() and bUseUlti and dist < ultiRange then
-      bActionTaken = core.OrderAbilityEntity(botBrain, ulti, unitTarget)
-
-      if hook and hook:CanActivate() and not core.unitSelf:IsChanneling() and not core.unitSelf:HasState("State_Devourer_Ability4_Self")
-      then
-      core.OrderAbilityPosition(botBrain, hook, DetermineHookTarget(hook):GetPosition())
-      core.BotEcho("HOOKKASIN")
-      end
-
-    elseif (ulti and ulti:CanActivate() and bUseUlti and dist > ultiRange) then
-      --move in when we want to ult
-      local desiredPos = unitTarget:GetPosition()
-      bActionTaken = core.OrderMoveToPosClamp(botBrain, unitSelf, desiredPos, false)
-    end
-  end
-
-  if not bActionTaken then
-    return object.harassExecuteOld(botBrain)
-  end
-end  
-
-
-
-UltiBehavior["Utility"] = UltiUtility
-UltiBehavior["Execute"] = UltiExecute
-UltiBehavior["Name"] = "Ulti enable"
-tinsert(behaviorLib.tBehaviors, UltiBehavior)
-
-
--- Harass general. Heron agressiivisuus luku: isompi luku -> vihasempi kaveri. Tähän voi määrittää logiikkaa agressiivisuudelle
-------------------------------------------------------
--- CustomHarassUtility Override --
--- Change Utility according to usable spells here --
-------------------------------------------------------
--- @param: IunitEntity hero
--- @return: number
-local function CustomHarassUtilityFnOverride(hero)
-  local nUtil = 0
-
-  if skills.hook:CanActivate() then
-    nUtil = nUtil + object.hook
-  end
-
-  if skills.rot:CanActivate() then
-    nUtil = nUtil + object.rot
-  end
-
-  if skills.ulti:CanActivate() then
-    nUtil = nUtil + object.ulti
-  end
-
-return nUtil
-end
--- assisgn custom Harrass function to the behaviourLib object
-behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride 
-
--- Harass hero
-local function HarassHeroExecuteOverride(botBrain)
+  local hook = skills.hook
   local unitTarget = behaviorLib.heroTarget
   if unitTarget == nil or not unitTarget:IsValid() then
     return false --can not execute, move on to the next behavior
@@ -395,7 +312,14 @@ local function HarassHeroExecuteOverride(botBrain)
 
     if ulti and ulti:CanActivate() and bUseUlti and dist < ultiRange then
       bActionTaken = core.OrderAbilityEntity(botBrain, ulti, unitTarget)
-    elseif (ulti and ulti:CanActivate() and bUseUlti and dist > ultiRange) then
+
+      if hook and hook:CanActivate()
+        then
+        core.OrderAbilityPosition(botBrain, hook, unitTarget:GetPosition(), true)
+        core.BotEcho("HOOKKASIN")
+      end
+
+      elseif (ulti and ulti:CanActivate() and bUseUlti and dist > ultiRange) then
       --move in when we want to ult
       local desiredPos = unitTarget:GetPosition()
       bActionTaken = core.OrderMoveToPosClamp(botBrain, unitSelf, desiredPos, false)
@@ -405,6 +329,81 @@ local function HarassHeroExecuteOverride(botBrain)
   if not bActionTaken then
     return object.harassExecuteOld(botBrain)
   end
+end  
+
+--not core.unitSelf:IsChanneling() and not core.unitSelf:HasState("State_Devourer_Ability4_Self")
+
+UltiBehavior["Utility"] = UltiUtility
+UltiBehavior["Execute"] = UltiExecute
+UltiBehavior["Name"] = "Ulti enable"
+tinsert(behaviorLib.tBehaviors, UltiBehavior)
+
+
+-- Harass general. Heron agressiivisuus luku: isompi luku -> vihasempi kaveri. Tähän voi määrittää logiikkaa agressiivisuudelle
+------------------------------------------------------
+-- CustomHarassUtility Override --
+-- Change Utility according to usable spells here --
+------------------------------------------------------
+-- @param: IunitEntity hero
+-- @return: number
+local function CustomHarassUtilityFnOverride(hero)
+
+  -- Tarkista tornirange jossain vaiheessa 
+  if skills.ulti:CanActivate() and skills.ulti:GetManaCost() < core.unitSelf:GetMana() then
+    return 100
+  end
+  return 0
+end
+-- assisgn custom Harrass function to the behaviourLib object
+behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride 
+
+-- Harass hero
+local function HarassHeroExecuteOverride(botBrain)
+  local hook = skills.hook
+  local unitTarget = behaviorLib.heroTarget
+  if unitTarget == nil or not unitTarget:IsValid() then
+    return false --can not execute, move on to the next behavior
+  end
+
+  local unitSelf = core.unitSelf
+
+  if unitSelf:IsChanneling() then
+    return
+  end
+
+  local bActionTaken = false
+
+  --since we are using an old pointer, ensure we can still see the target for entity targeting
+  if core.CanSeeUnit(botBrain, unitTarget) then
+    local dist = Vector3.Distance2D(unitSelf:GetPosition(), unitTarget:GetPosition())
+    local attkRange = core.GetAbsoluteAttackRangeToUnit(unitSelf, unitTarget);
+
+    local itemGhostMarchers = core.itemGhostMarchers
+
+    local ulti = skills.ulti
+    local ultiRange = ulti and (ulti:GetRange() + core.GetExtraRange(unitSelf) + core.GetExtraRange(unitTarget)) or 0
+
+
+    if ulti and ulti:CanActivate() then
+      if dist < ultiRange then
+        bActionTaken = core.OrderAbilityEntity(botBrain, ulti, unitTarget)
+
+
+      else 
+      --move in when we want to ult
+      local desiredPos = unitTarget:GetPosition()
+      bActionTaken = core.OrderMoveToPosClamp(botBrain, unitSelf, desiredPos, false)
+    end
+  end
+  if not bActionTaken and hook and hook:CanActivate() then 
+   core.OrderAbilityPosition(botBrain, hook, unitTarget:GetPosition())
+ end
+end
+
+
+if not bActionTaken then
+  return object.harassExecuteOld(botBrain)
+end
 end
 object.harassExecuteOld = behaviorLib.HarassHeroBehavior["Execute"]
 behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
@@ -416,10 +415,10 @@ behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
 -- @param: tGameVariables
 -- @return: none
 function object:onthinkOverride(tGameVariables)
-  self:onthinkOld(tGameVariables)
-  if behaviorLib.nitCurrentTarget ~= nil then
-    core.BotEcho(unitCurrentTarget)
-  end
+ self:onthinkOld(tGameVariables)
+ if behaviorLib.nitCurrentTarget ~= nil then
+  core.BotEcho(unitCurrentTarget)
+end
   -- custom code here
   -- lvl 1 rot, agroo aika lujaa 
   --core.BotEcho()
@@ -437,7 +436,7 @@ function object:onthinkOverride(tGameVariables)
   --se käyttäs kakkosskillii ja hakkais autoättäkeillä sitä vihuu suht innokkaasti. sit vois kokeilla semmosta että se koittas hookata vihuu ja jos osuu ni kakkosskilli päälle ->
   --sen aggressiivisuus nostetaan hetkellisesti iha älyttömän isoks ni se jahtaa sit sen kuoliaaks
   if distanceEnemy > 0 then
-    
+
   end
 
 
@@ -454,9 +453,18 @@ object.onthink = object.onthinkOverride
 -- @param: eventdata
 -- @return: none
 function object:oncombateventOverride(EventData)
+  local addBonus = 0
   self:oncombateventOld(EventData)
+  --eventsLib.printCombatEvent(EventData)
+  --core.BotEcho(EventData.SourceUnit:GetUniqueID())
+  
+  if EventData.Type == "Ability" and EventData.SourceUnit:GetUniqueID() == core.unitSelf:GetUniqueID() and  EventData.InflictorName == "Ability_Devourer4"  then
+    addBonus = addBonus + 100
+  end
 
-  -- custom code here
+  if addBonus > 0 then
+    core.nHarassBonus = core.nHarassBonus + addBonus
+  end
 end
 
 -- override combat event trigger function.
@@ -469,9 +477,9 @@ object.oncombatevent = object.oncombateventOverride
 behaviorLib.StartingItems = {"Item_IronBuckler", "Item_RunesOfTheBlight", "Item_ManaBattery"}
 behaviorLib.LaneItems =
         {"Item_Marchers","Item_PowerSupply", "Item_MysticVestments", "Item_Shield2"} -- Shield2 is HotBL
-behaviorLib.MidItems =
+        behaviorLib.MidItems =
         {"Item_EnhancedMarchers", "Item_PortalKey"}
-behaviorLib.LateItems =
+        behaviorLib.LateItems =
         {"Item_Excruciator", "Item_SolsBulwark", "Item_DaemonicBreastplate", "Item_Intelligence7", "Item_HealthMana2", "Item_BehemothsHeart"} --Excruciator is Barbed Armor, Item_Intelligence7 is staff, Item_HealthMana2 is icon
 
-BotEcho('finished loading devourer_main')
+        BotEcho('finished loading devourer_main')
