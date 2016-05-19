@@ -139,31 +139,8 @@ object.oncombatevent = object.oncombateventOverride
 --end
 
 
-local function RuneUtility(botBrain)
-local unitSelf = core.unitSelf
-local runePos = core.rune:GetPosition()
 
-local distanceToRune = Vector3.Distance2D(unitSelf:GetPosition(), runePos)
 
-if distanceToRune <1000 and core.rune != nil then
-  return 100
-end
-
-return 0
-end
-
-local function RuneExecute(botBrain)
-  
-return core.unitSelf:OrderMoveToPos(botBrain,unitSelf,runePos)
-
-  
-end
-
-local RuneBehavior = {}
-RuneBehavior["Utility"] = ComboUtility
-RuneBehavior["Execute"] = ComboExecute
-RuneBehavior["Name"] = "Taking the rune"
-tinsert(behaviorLib.tBehaviors, RuneBehavior)
 
 local bCombo = false
 local function ComboUtility(botBrain)
