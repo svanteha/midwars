@@ -94,6 +94,42 @@ function object:SkillBuild()
     end
 end
 
+local function GetLowestHPEnemy() 
+  local tLocalEnemies = core.CopyTable(core.localUnits["EnemyHeroes"])
+  local HP = 1
+  local unitTarget = nil
+  for _, unitEnemy in pairs(tLocalEnemies) do
+    local enemyHP = unitEnemy:GetHealthPercent()
+    core.BotEcho("enemyHP: " .. enemyHP)
+    if enemyHP < HP or not unitTarget then
+      unitTarget = unitEnemy
+      HP = enemyHP
+    end 
+  end
+  return unitTarget
+end
+
+local function CustomHarassHeroUtilityFnOverride(hero)
+  local nUtil = 0
+  local unitEnemy = GetLowestHPEnemy()
+  behaviorLib.heroTarget = unitEnemy
+  if unitEnemy and unitEnemy:GetHealthPercent() < 0.5 then
+    core.BotEcho("LET'S GOOOO")
+    nUtil = 60
+    return nUtil
+  end
+  return object.HarassUtilityOld(hero)
+end
+-- assisgn custom Harrass function to the behaviourLib object
+object.HarassUtilityOld = behaviorLib.HarassHeroBehavior["Utility"]
+behaviorLib.HarassHeroBehavior["Utility"] = CustomHarassHeroUtilityFnOverride 
+
+local function HarassHeroExecuteOverride(botBrain)
+  return object.harassExecuteOld(botBrain)
+end
+object.harassExecuteOld = behaviorLib.HarassHeroBehavior["Execute"]
+behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
+
 ------------------------------------------------------
 --            onthink override                      --
 -- Called every bot tick, custom onthink code here  --
