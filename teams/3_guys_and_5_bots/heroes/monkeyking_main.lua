@@ -276,12 +276,12 @@ SlamBehavior["Name"] = "Slam"
 tinsert(behaviorLib.tBehaviors, SlamBehavior)
 
 --items
-behaviorLib.StartingItems = {"Item_IronBuckler", "Item_RunesOfTheBlight", "Item_HealthPotion", "Item_DuckBoots"}
+behaviorLib.StartingItems = {"Item_IronBuckler", "Item_HealthPotion", "Item_HealthPotion", "Item_DuckBoots"}
 behaviorLib.LaneItems =
         {"Item_Bottle", "Item_Marchers", "Item_Soulscream"} -- Shield2 is HotBL
         behaviorLib.MidItems =
-        {"Item_EnhancedMarchers", "Item_Beastheart" , "Item_Lifetube"}
+        {"Item_EnhancedMarchers", "Item_Beastheart" , "Item_Shield2"}
         behaviorLib.LateItems =
-        {"Item_Sicarius", "Item_Strength6", "Item_DaemonicBreastplate", "Item_Wingbow"}
+        {"Item_Sicarius", "Item_Strength6", "Item_DaemonicBreastplate", "Item_Wingbow", "Item_Doombringer"}
 
 BotEcho('finished loading monkeyking_main')
