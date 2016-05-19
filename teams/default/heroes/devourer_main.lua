@@ -111,6 +111,8 @@ end
 object.onthinkOld = object.onthink
 object.onthink = object.onthinkOverride
 
+local unitHooked = nil
+
 ----------------------------------------------
 --            oncombatevent override        --
 -- use to check for infilictors (fe. buffs) --
@@ -120,6 +122,20 @@ object.onthink = object.onthinkOverride
 function object:oncombateventOverride(EventData)
   self:oncombateventOld(EventData)
 
+  if EventData.InflictorName == "Projectile_Devourer_Ability1" and EventData.SourceUnit:GetUniqueID() == core.unitSelf:GetUniqueID() then
+    if EventData.Type == "Attack" then
+      unitHooked = EventData.TargetUnit
+    elseif EventData.Type == "Projectile_Target" and EventData.TargetUnit:GetUniqueID() == core.unitSelf:GetUniqueID() then
+      if unitHooked and unitHooked:IsHero() then
+        BotEcho("Hero near me!")
+        local teamBotBrain = core.teamBotBrain
+        if teamBotBrain.SetTeamTarget then
+          teamBotBrain:SetTeamTarget(unitHooked)
+        end
+      end
+      unitHooked = nil
+    end
+  end
   -- custom code here
 end
 -- override combat event trigger function.
