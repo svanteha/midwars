@@ -19,7 +19,6 @@ behaviorLib.tRuneToPick = nil
 behaviorLib.nRuneGrabRange = 1200
 -- 30 if there is rune within 1000 and we see it
 local function PickRuneUtilityOverride(botBrain)
-  
   local rune = core.teamBotBrain.GetNearestRune(core.unitSelf:GetPosition(), true)
   if rune == nil or Vector3.Distance2DSq(rune.vecLocation, core.unitSelf:GetPosition()) > behaviorLib.nRuneGrabRange * behaviorLib.nRuneGrabRange then
     return 0
