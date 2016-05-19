@@ -348,7 +348,7 @@ tinsert(behaviorLib.tBehaviors, ArrowBehavior)
 
 
 behaviorLib.StartingItems = 
-        {"Item_HealthPotion", "Item_RunesOfTheBlight", "Item_MinorTotem", "Item_MinorTotem", "Item_DuckBoots", "Item_DuckBoots"}
+        {"Item_HealthPotion", "Item_MinorTotem", "Item_MinorTotem", "Item_DuckBoots", "Item_DuckBoots"}
 behaviorLib.LaneItems =
         {"Item_Bottle", "Item_Marchers", "Item_Soulscream", "Item_EnhancedMarchers", "Item_Soulscream"} 
 behaviorLib.MidItems =

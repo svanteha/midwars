@@ -276,7 +276,7 @@ SlamBehavior["Name"] = "Slam"
 tinsert(behaviorLib.tBehaviors, SlamBehavior)
 
 --items
-behaviorLib.StartingItems = {"Item_IronBuckler", "Item_HealthPotion", "Item_HealthPotion", "Item_DuckBoots"}
+behaviorLib.StartingItems = {"Item_IronBuckler", "Item_HealthPotion", "Item_DuckBoots"}
 behaviorLib.LaneItems =
         {"Item_Bottle", "Item_Marchers", "Item_Soulscream"} -- Shield2 is HotBL
         behaviorLib.MidItems =
