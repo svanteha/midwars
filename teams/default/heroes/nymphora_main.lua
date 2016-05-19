@@ -223,7 +223,7 @@ local function FindHealTarget(botBrain, heal)
 end
 local function HealUtility(botBrain)
   local heal = skills.heal
-  healTarget = FindManaTarget(botBrain, heal)
+  healTarget = FindHealTarget(botBrain, heal)
   if heal:CanActivate() and healTarget then
      return 50
   end

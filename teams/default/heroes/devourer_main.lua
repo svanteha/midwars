@@ -124,10 +124,13 @@ function object:oncombateventOverride(EventData)
 
   if EventData.InflictorName == "Projectile_Devourer_Ability1" and EventData.SourceUnit:GetUniqueID() == core.unitSelf:GetUniqueID() then
     if EventData.Type == "Attack" then
-      unitHooked = EventData.TargetUnit
+      local victim = EventData.TargetUnit
+      if victim:IsHero() then
+        core.AllChat("YOU'RE MINE!")
+        unitHooked = victim
+      end
     elseif EventData.Type == "Projectile_Target" and EventData.TargetUnit:GetUniqueID() == core.unitSelf:GetUniqueID() then
-      if unitHooked and unitHooked:IsHero() then
-        BotEcho("Hero near me!")
+      if unitHooked then
         local teamBotBrain = core.teamBotBrain
         if teamBotBrain.SetTeamTarget then
           teamBotBrain:SetTeamTarget(unitHooked)
