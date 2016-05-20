@@ -123,7 +123,7 @@ local function HarassHeroExecuteOverride(botBrain)
     end
 
     local stun = skills.rock
-    if not bActionTaken and stun and stun:CanActivate() and Vector3.Distance2D(unitSelf:GetPosition(), unitTarget:GetPosition()) < 200 and facing < 0.3 then
+    if not bActionTaken and not unitTarget:IsStunned() and not unitTarget:IsMagicImmune() and stun and stun:CanActivate() and Vector3.Distance2D(unitSelf:GetPosition(), unitTarget:GetPosition()) < 200 and facing < 0.3 then
 
       bActionTaken = core.OrderAbility(botBrain, stun)
     end

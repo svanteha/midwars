@@ -167,10 +167,16 @@ local function HarassHeroExecuteOverride(botBrain)
   if core.CanSeeUnit(botBrain, unitTarget) then
   
     local nTargetDistanceSq = Vector3.Distance2DSq(unitSelf:GetPosition(), unitTarget:GetPosition())
-    
+
+    local ulti = skills.ulti
+    local nRange = ulti:GetRange()
+    if not unitTarget:IsMagicImmune() and ulti:CanActivate() and nTargetDistanceSq < (nRange * nRange) then
+      bActionTaken = core.OrderAbilityEntity(botBrain, ulti, unitTarget)
+    end
+
     local hold = skills.hold
-    local nRange = hold:GetRange()
-    if hold:CanActivate() and not unitTarget:HasState("State_PuppetMaster_Ability2") and nTargetDistanceSq < (nRange * nRange) then
+    nRange = hold:GetRange()
+    if not bActionTaken and not unitTarget:IsStunned() and not unitTarget:IsMagicImmune() and hold:CanActivate() and not unitTarget:HasState("State_PuppetMaster_Ability2") and nTargetDistanceSq < (nRange * nRange) then
       bActionTaken = core.OrderAbilityEntity(botBrain, hold, unitTarget)
     end
 
@@ -180,7 +186,7 @@ local function HarassHeroExecuteOverride(botBrain)
     
     local nEnemies = core.NumberElements(unitsNearby.Enemies)
 
-    if not bActionTaken and not unitTarget:HasState("State_PuppetMaster_Ability1") and show:CanActivate() and nTargetDistanceSq < (nRange * nRange) and nEnemies > 0 then
+    if not bActionTaken and not unitTarget:IsStunned() and not unitTarget:IsMagicImmune() and not unitTarget:HasState("State_PuppetMaster_Ability1") and show:CanActivate() and nTargetDistanceSq < (nRange * nRange) and nEnemies > 0 then
       bActionTaken = core.OrderAbilityEntity(botBrain, show, unitTarget)
     end
   end

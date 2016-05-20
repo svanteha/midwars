@@ -301,7 +301,7 @@ local function HasEnemiesInRange(unit, range)
   local rangeSq = range * range
   local myPos = unit:GetPosition()
   for _, enemy in pairs(enemies) do
-    if Vector3.Distance2DSq(enemy:GetPosition(), myPos) < rangeSq then
+    if not enemy:IsMagicImmune() and Vector3.Distance2DSq(enemy:GetPosition(), myPos) < rangeSq then
       return true
     end
   end
