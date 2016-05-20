@@ -353,67 +353,67 @@ tinsert(behaviorLib.tBehaviors, UltiBehavior)
 ------------------------------------------------------
 -- @param: IunitEntity hero
 -- @return: number
-local function CustomHarassUtilityFnOverride(hero)
+  local function CustomHarassUtilityFnOverride(hero)
 
-  -- Tarkista tornirange jossain vaiheessa 
-  if skills.ulti:CanActivate() and skills.ulti:GetManaCost() < core.unitSelf:GetMana() then
-    return 99
-  end
-  return 0
-end
--- assisgn custom Harrass function to the behaviourLib object
-behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride 
-
--- Harass hero
-local function HarassHeroExecuteOverride(botBrain)
-  local hook = skills.hook
-  local unitTarget = behaviorLib.heroTarget
-  if unitTarget == nil or not unitTarget:IsValid() then
-    return false --can not execute, move on to the next behavior
-  end
-
-  local unitSelf = core.unitSelf
-
-  if unitSelf:IsChanneling() then
-    return
-  end
-
-  local bActionTaken = false
-
-  --since we are using an old pointer, ensure we can still see the target for entity targeting
-  if core.CanSeeUnit(botBrain, unitTarget) then
-    local dist = Vector3.Distance2D(unitSelf:GetPosition(), unitTarget:GetPosition())
-    local attkRange = core.GetAbsoluteAttackRangeToUnit(unitSelf, unitTarget);
-
-    local itemGhostMarchers = core.itemGhostMarchers
-
-    local ulti = skills.ulti
-    local ultiRange = ulti and (ulti:GetRange() + core.GetExtraRange(unitSelf) + core.GetExtraRange(unitTarget)) or 0
-
-
-    if ulti and ulti:CanActivate() then
-      if dist < ultiRange then
-        bActionTaken = core.OrderAbilityEntity(botBrain, ulti, unitTarget)
-
-
-      else 
-      --move in when we want to ult
-      local desiredPos = unitTarget:GetPosition()
-      bActionTaken = core.OrderMoveToPosClamp(botBrain, unitSelf, desiredPos, false)
+    -- Tarkista tornirange jossain vaiheessa 
+    if skills.ulti:CanActivate() and skills.ulti:GetManaCost() < core.unitSelf:GetMana() then
+      return 99
     end
+    return 0
   end
-  if not bActionTaken and hook and hook:CanActivate() then 
-   core.OrderAbilityPosition(botBrain, hook, unitTarget:GetPosition())
- end
-end
+  -- assisgn custom Harrass function to the behaviourLib object
+  behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride 
+
+  -- Harass hero
+  local function HarassHeroExecuteOverride(botBrain)
+    local hook = skills.hook
+    local unitTarget = behaviorLib.heroTarget
+    if unitTarget == nil or not unitTarget:IsValid() then
+      return false --can not execute, move on to the next behavior
+    end
+
+    local unitSelf = core.unitSelf
+
+    if unitSelf:IsChanneling() then
+      return
+    end
+
+    local bActionTaken = false
+
+    --since we are using an old pointer, ensure we can still see the target for entity targeting
+    if core.CanSeeUnit(botBrain, unitTarget) then
+      local dist = Vector3.Distance2D(unitSelf:GetPosition(), unitTarget:GetPosition())
+      local attkRange = core.GetAbsoluteAttackRangeToUnit(unitSelf, unitTarget);
+
+      local itemGhostMarchers = core.itemGhostMarchers
+
+      local ulti = skills.ulti
+      local ultiRange = ulti and (ulti:GetRange() + core.GetExtraRange(unitSelf) + core.GetExtraRange(unitTarget)) or 0
 
 
-if not bActionTaken then
-  return object.harassExecuteOld(botBrain)
-end
-end
-object.harassExecuteOld = behaviorLib.HarassHeroBehavior["Execute"]
-behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
+      if ulti and ulti:CanActivate() then
+        if dist < ultiRange then
+          bActionTaken = core.OrderAbilityEntity(botBrain, ulti, unitTarget)
+
+
+        else 
+        --move in when we want to ult
+        local desiredPos = unitTarget:GetPosition()
+        bActionTaken = core.OrderMoveToPosClamp(botBrain, unitSelf, desiredPos, false)
+      end
+    end
+    if not bActionTaken and hook and hook:CanActivate() then 
+     core.OrderAbilityPosition(botBrain, hook, unitTarget:GetPosition())
+   end
+  end
+
+
+  if not bActionTaken then
+    return object.harassExecuteOld(botBrain)
+  end
+  end
+  object.harassExecuteOld = behaviorLib.HarassHeroBehavior["Execute"]
+  behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
 
 ------------------------------------------------------
 --            onthink override                      --
@@ -423,31 +423,6 @@ behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
 -- @return: none
 function object:onthinkOverride(tGameVariables)
  self:onthinkOld(tGameVariables)
- if behaviorLib.nitCurrentTarget ~= nil then
-  core.BotEcho(unitCurrentTarget)
-end
-  -- custom code here
-  -- lvl 1 rot, agroo aika lujaa 
-  --core.BotEcho()
-  local rot = skills.rot
-  local tLocalEnemies = core.CopyTable(core.localUnits["EnemyHeroes"])
-  local myPos = core.unitSelf:GetPosition()
-  local distanceEnemy = -1
-  for _, unitEnemy in pairs(tLocalEnemies) do
-    local enemyPos = unitEnemy:GetPosition()
-    distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
-  end
-  --RotEnableExecute(self)
-  --enemy spotted! eli harassheroexecute on paikka missä määritellään logiikkaa vastustajan häiriköinnille ja miten se tekee niit skillei tjsp. ja tuo 
-  --CustomHarassUtilityOverride luku joka laittaa sen agroo. eli esim. semmosta ois hyvä kokeilla aluks että
-  --se käyttäs kakkosskillii ja hakkais autoättäkeillä sitä vihuu suht innokkaasti. sit vois kokeilla semmosta että se koittas hookata vihuu ja jos osuu ni kakkosskilli päälle ->
-  --sen aggressiivisuus nostetaan hetkellisesti iha älyttömän isoks ni se jahtaa sit sen kuoliaaks
-  if distanceEnemy > 0 then
-
-  end
-
-
-
 
 end
 object.onthinkOld = object.onthink

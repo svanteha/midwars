@@ -4,9 +4,9 @@ local object = _G.object
 local core, eventsLib, behaviorLib, metadata, skills = object.core, object.eventsLib, object.behaviorLib, object.metadata, object.skills
 
 local print, ipairs, pairs, string, table, next, type, tinsert, tremove, tsort, format, tostring, tonumber, strfind, strsub
-  = _G.print, _G.ipairs, _G.pairs, _G.string, _G.table, _G.next, _G.type, _G.table.insert, _G.table.remove, _G.table.sort, _G.string.format, _G.tostring, _G.tonumber, _G.string.find, _G.string.sub
+= _G.print, _G.ipairs, _G.pairs, _G.string, _G.table, _G.next, _G.type, _G.table.insert, _G.table.remove, _G.table.sort, _G.string.format, _G.tostring, _G.tonumber, _G.string.find, _G.string.sub
 local ceil, floor, pi, tan, atan, atan2, abs, cos, sin, acos, max, random
-  = _G.math.ceil, _G.math.floor, _G.math.pi, _G.math.tan, _G.math.atan, _G.math.atan2, _G.math.abs, _G.math.cos, _G.math.sin, _G.math.acos, _G.math.max, _G.math.random
+= _G.math.ceil, _G.math.floor, _G.math.pi, _G.math.tan, _G.math.atan, _G.math.atan2, _G.math.abs, _G.math.cos, _G.math.sin, _G.math.acos, _G.math.max, _G.math.random
 
 local BotEcho, VerboseLog, BotLog = core.BotEcho, core.VerboseLog, core.BotLog
 
@@ -58,8 +58,8 @@ local matkalla = false
 
 
 if openSlots ~= 6 then 
-palautettava = 100
-matkalla = true
+  palautettava = 100
+  matkalla = true
 end
 
 if matkalla then
@@ -127,7 +127,8 @@ local function ShopUtilityOverride(botBrain)
   --   BotEcho(format("  ShopUtility: %g", utility))
   -- end
 
-  return 100
+  return 0
+end
 end
 
 
@@ -141,10 +142,10 @@ Current algorithm:
        2. Magic Armor
        3. Homecoming Stone
        4. Most Expensive Item(s) (price decending)
---]]
-  if object.bUseShop == false then
-    return
-  end
+       --]]
+       if object.bUseShop == false then
+        return
+      end
 
   -- Space out your buys
   if behaviorLib.nextBuyTime > HoN.GetGameTime() then
@@ -193,18 +194,18 @@ Current algorithm:
 
     if #componentDefs > slotsOpen + 1 then --1 for provisional slot
       behaviorLib.SellLowestItems(botBrain, #componentDefs - slotsOpen - 1)
-    elseif #componentDefs == 0 then
-      behaviorLib.ShuffleCombine(botBrain, nextItemDef, unitSelf)
-    end
+      elseif #componentDefs == 0 then
+        behaviorLib.ShuffleCombine(botBrain, nextItemDef, unitSelf)
+      end
 
-    local nGoldAmountBefore = botBrain:GetGold()
-    
-    if nextItemDef ~= nil and unitSelf:GetItemCostRemaining(nextItemDef) < nGoldAmountBefore then
-      unitSelf:PurchaseRemaining(nextItemDef)
-    end
+      local nGoldAmountBefore = botBrain:GetGold()
 
-    local nGoldAmountAfter = botBrain:GetGold()
-    bGoldReduced = (nGoldAmountAfter < nGoldAmountBefore)
+      if nextItemDef ~= nil and unitSelf:GetItemCostRemaining(nextItemDef) < nGoldAmountBefore then
+        unitSelf:PurchaseRemaining(nextItemDef)
+      end
+
+      local nGoldAmountAfter = botBrain:GetGold()
+      bGoldReduced = (nGoldAmountAfter < nGoldAmountBefore)
 
     --Check to see if this purchased item has uncombined parts
     componentDefs = unitSelf:GetItemComponentsRemaining(nextItemDef)
@@ -227,8 +228,8 @@ end
 
 
 --ShopBehavior = {}
-behaviorLib.ShopBehavior["Utility"] = ShopUtilityOverride
-behaviorLib.ShopBehavior["Execute"] = ShopExecuteOverride
+--behaviorLib.ShopBehavior["Utility"] = ShopUtilityOverride
+--behaviorLib.ShopBehavior["Execute"] = ShopExecuteOverride
 --ShopBehavior["Name"] = "Shop"
 --tinsert(behaviorLib.tBehaviors, ShopBehavior)
 
@@ -277,31 +278,31 @@ function generics.CustomHarassUtility(target)
   nUtil = nUtil - (1 - unitSelf:GetHealthPercent()) * 100
 
   if unitSelf:GetHealth() > target:GetHealth() then
-     nUtil = nUtil + 10
-  end
-  
-  if target:IsChanneling() or target:IsDisarmed() or target:IsImmobilized() or target:IsPerplexed() or target:IsSilenced() or target:IsStunned() or unitSelf:IsStealth() then
-    nUtil = nUtil + 50
+   nUtil = nUtil + 10
+ end
+
+ if target:IsChanneling() or target:IsDisarmed() or target:IsImmobilized() or target:IsPerplexed() or target:IsSilenced() or target:IsStunned() or unitSelf:IsStealth() then
+  nUtil = nUtil + 50
+end
+
+local unitsNearby = core.AssessLocalUnits(object, myPos,100)
+
+
+if core.NumberElements(unitsNearby.AllyHeroes) == 0 then
+
+  if core.GetClosestEnemyTower(myPos, 720) then
+    nUtil = nUtil - 100
   end
 
-  local unitsNearby = core.AssessLocalUnits(object, myPos,100)
-  
-  
-  if core.NumberElements(unitsNearby.AllyHeroes) == 0 then
-  
-    if core.GetClosestEnemyTower(myPos, 720) then
-      nUtil = nUtil - 100
-    end
-    
-    for id, creep in pairs(unitsNearby.EnemyCreeps) do
-      local creepPos = creep:GetPosition()
-      if(creep:GetAttackType() == "ranged" or Vector3.Distance2D(myPos, creepPos) < 20) then
-        nUtil = nUtil - 20
-      end 
-    end
+  for id, creep in pairs(unitsNearby.EnemyCreeps) do
+    local creepPos = creep:GetPosition()
+    if(creep:GetAttackType() == "ranged" or Vector3.Distance2D(myPos, creepPos) < 20) then
+      nUtil = nUtil - 20
+    end 
   end
+end
 
-  return nUtil
+return nUtil
 end
 
 
