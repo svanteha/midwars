@@ -66,7 +66,7 @@ function object:SkillBuild()
     skills.rock = unitSelf:GetAbility(2)
     skills.ulti = unitSelf:GetAbility(3)
     skills.attributeBoost = unitSelf:GetAbility(4)
-
+skills.courier = unitSelf:GetAbility(12)
     if skills.dash and skills.pole and skills.rock and skills.ulti and skills.attributeBoost then
       bSkillsValid = true
     else

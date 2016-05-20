@@ -77,7 +77,7 @@ function object:SkillBuild()
     skills.vault = unitSelf:GetAbility(1)
     skills.slam = unitSelf:GetAbility(2)
     skills.ulti = unitSelf:GetAbility(3)
-    
+    skills.courier = unitSelf:GetAbility(12)
     if skills.dash and skills.vault and skills.slam and skills.ulti then
       bSkillsValid = true
     else
