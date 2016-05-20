@@ -102,7 +102,6 @@ local function GetLowestHPEnemy()
   local unitTarget = nil
   for _, unitEnemy in pairs(tLocalEnemies) do
     local enemyHP = unitEnemy:GetHealthPercent()
-    core.BotEcho("enemyHP: " .. enemyHP)
     if enemyHP < HP or not unitTarget then
       unitTarget = unitEnemy
       HP = enemyHP
@@ -117,7 +116,7 @@ local function CustomHarassHeroUtilityFnOverride(hero)
   behaviorLib.heroTarget = unitEnemy
   if unitEnemy and unitEnemy:GetHealthPercent() < 0.5 then
     core.BotEcho("LET'S GOOOO")
-    nUtil = 60
+    nUtil = 70
     return nUtil
   end
   return object.HarassUtilityOld(hero)
@@ -181,13 +180,28 @@ local function DetermineClosestEnemy(skill)
   return unitTarget
 end
 
+local function GetClosestCreep()
+  local enemyCreeps = core.localUnits["EnemyCreeps"]
+  local myPos = core.unitSelf:GetPosition()
+  local target = nil
+  local distanceTarget = 999999
+  for _, unitEnemy in pairs(enemyCreeps) do
+    local enemyPos = unitEnemy:GetPosition()
+    local distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
+    if distanceEnemy < distanceTarget then
+        target = unitEnemy
+        distanceTarget = distanceEnemy
+    end
+  end
+  return target
+end
+
 local function ComboUtility(botBrain)
   local dash = skills.dash
   local vault = skills.vault
   local heroTarget = behaviorLib.heroTarget
   local manacost = dash:GetManaCost() + vault:GetManaCost()
   if dash:CanActivate() and vault:CanActivate() and heroTarget and core.unitSelf:GetMana() >= manacost then 
-    core.BotEcho("We have mana and skills and target")
     local maxDistance = dash:GetRange()
     local maxDistanceSq = maxDistance * maxDistance
     local myPos = core.unitSelf:GetPosition()
@@ -223,12 +237,51 @@ local function ComboExecute(botBrain)
     end
   end
 end
-
-
 local ComboBehavior = {}
 ComboBehavior["Utility"] = ComboUtility
 ComboBehavior["Execute"] = ComboExecute
 ComboBehavior["Name"] = "Combo like a motherfucker"
 tinsert(behaviorLib.tBehaviors, ComboBehavior)
+
+local function SlamUtility(botBrain)
+  local slam = skills.slam
+  local dash = skills.dash
+  local vault = skills.vault
+  local myMana = core.unitSelf:GetMana()
+  local fullMana = slam:GetManaCost() + dash:GetManaCost() + vault:GetManaCost() + 100
+  if myMana > fullMana and slam:GetLevel() > 2 and slam:CanActivate() then
+    local target = GetClosestCreep()
+    if target then
+      local distanceEnemy = Vector3.Distance2DSq(core.unitSelf:GetPosition(), target:GetPosition())
+      if distanceEnemy < 100000 then
+        core.BotEcho("should slam")
+        return 50
+      end
+    end
+  end
+  return 0
+end
+
+local function SlamExecute(botBrain)
+  local slam = skills.slam
+  local myUnit = core.unitSelf
+  local target = GetClosestCreep()
+  core.OrderMoveToPos(botBrain, myUnit, target:GetPosition())
+  core.OrderAbility(botBrain, slam)
+end
+local SlamBehavior = {}
+SlamBehavior["Utility"] = SlamUtility
+SlamBehavior["Execute"] = SlamExecute
+SlamBehavior["Name"] = "Slam"
+tinsert(behaviorLib.tBehaviors, SlamBehavior)
+
+--items
+behaviorLib.StartingItems = {"Item_IronBuckler", "Item_HealthPotion", "Item_DuckBoots"}
+behaviorLib.LaneItems =
+        {"Item_Bottle", "Item_Marchers", "Item_Soulscream"} -- Shield2 is HotBL
+        behaviorLib.MidItems =
+        {"Item_EnhancedMarchers", "Item_Beastheart" , "Item_Shield2"}
+        behaviorLib.LateItems =
+        {"Item_Sicarius", "Item_Strength6", "Item_DaemonicBreastplate", "Item_Wingbow", "Item_Doombringer"}
 
 BotEcho('finished loading monkeyking_main')

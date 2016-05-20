@@ -16,7 +16,7 @@ local generics = object.generics
 BotEcho("loading default generics ..")
 
 behaviorLib.tRuneToPick = nil
-behaviorLib.nRuneGrabRange = 1200
+behaviorLib.nRuneGrabRange = 2000
 -- 30 if there is rune within 1000 and we see it
 local function PickRuneUtilityOverride(botBrain)
   local rune = core.teamBotBrain.GetNearestRune(core.unitSelf:GetPosition(), true)
@@ -30,41 +30,200 @@ local function PickRuneUtilityOverride(botBrain)
 end
 behaviorLib.PickRuneBehavior["Utility"] = PickRuneUtilityOverride
 
+--tsekkaa montako open slottia stashish on
+function shopping.NumberSlotsOpenStash(inventory)
 
--- --Send items with courier
+  local numOpen = 0
+  --laske stash slotit
+  for slot = 7, 12, 1 do
+    curItem = inventory[slot]
+    if curItem == nil then
+      --nil on free slot --> lisää numOpen + 1
+      numOpen = numOpen + 1
+    end
+  end
+  return numOpen
+end
 
--- local function CourierUtility(botBrain)
--- --Jos stashissä itemeitä palauta korkea arvo
--- local palautettava = 0
+--Send items with courier
 
--- if  then
--- palautettava = 100
+local function CourierUtility(botBrain)
+--Jos stashissä itemeitä palauta korkea arvo
+local palautettava = 0
+
+local stashissaItem = false;
+local inventory = unitSelf:GetInventory(true)
+local openSlots = shopping.NumberSlotsOpenStash(inventory)
+
+
+
+if openSlots ~= 6 then 
+palautettava = 100
+end
+
+return palautettava
+end
+
+
+
+local function CourierExecute(botBrain)
+
+--Pitäs saada lähettää itemit courierilla
+
+
+end
+
+
+CourierBehavior = {}
+CourierBehavior["Utility"] = CourierUtility
+CourierBehavior["Execute"] = CourierExecute
+CourierBehavior["Name"] = "Courier"
+tinsert(behaviorLib.tBehaviors, CourierBehavior)
+
+
+
+
+
+
+-- -------- Behavior Fns --------
+-- local function ShopUtilityOverride(botBrain)
+--   --BotEcho('CanAccessStash: '..tostring(core.unitSelf:CanAccessStash()))
+--   local bCanAccessShop = true
+
+--   -- --tarkastetaan, onko tarpeeksi rahaa ostaa item
+--   --  local nextItemDef = behaviorLib.DetermineNextItemDef(botBrain)
+--   --  local kultaMaara = botBrain:GetGold()
+--   --  local itemCost = unitSelf:GetItemCostRemaining(nextItemDef)
+
+
+  
+--   -- if kultaMaara > itemCost then 
+--   --   bCanAccessShop = true
+--   -- end
+
+--   --just got into shop access, try buying
+--   if bCanAccessShop and not behaviorLib.canAccessShopLast then
+--     --BotEcho("Open for shopping!")
+--     behaviorLib.finishedBuying = false
+--   end
+
+--   behaviorLib.canAccessShopLast = bCanAccessShop
+
+--   local utility = 0
+--   if bCanAccessShop and not behaviorLib.finishedBuying then
+--     if not core.teamBotBrain.bPurchasedThisFrame then
+--       utility = 99
+--     end
+--   end
+
+--   if botBrain.bDebugUtility == true and utility ~= 0 then
+--     BotEcho(format("  ShopUtility: %g", utility))
+--   end
+
+--   return utility
 -- end
 
--- return palautettava
+
+-- local function ShopExecuteOverride(botBrain)
+-- --[[
+-- Current algorithm:
+--     A) Buy items from the list
+--     B) Swap items to complete recipes
+--     C) Swap items to fill inventory, prioritizing...
+--        1. Boots / +ms
+--        2. Magic Armor
+--        3. Homecoming Stone
+--        4. Most Expensive Item(s) (price decending)
+-- --]]
+--   if object.bUseShop == false then
+--     return
+--   end
+
+--   -- Space out your buys
+--   if behaviorLib.nextBuyTime > HoN.GetGameTime() then
+--     return
+--   end
+
+--   behaviorLib.nextBuyTime = HoN.GetGameTime() + behaviorLib.buyInterval
+
+--   --Determine where in the pattern we are (mostly for reloads)
+--   if behaviorLib.buyState == behaviorLib.BuyStateUnknown then
+--     behaviorLib.DetermineBuyState(botBrain)
+--   end
+  
+--   local unitSelf = core.unitSelf
+--   local bShuffled = false
+--   local bGoldReduced = false
+--   local tInventory = core.unitSelf:GetInventory(true)
+--   local nextItemDef = behaviorLib.DetermineNextItemDef(botBrain)
+--   local bMyTeamHasHuman = core.MyTeamHasHuman()
+  
+
+  
+  
+--   if behaviorLib.printShopDebug then
+--     BotEcho("============ BuyItems ============")
+--     if nextItemDef then
+--       BotEcho("BuyItems - nextItemDef: "..nextItemDef:GetName())
+--     else
+--       BotEcho("ERROR: BuyItems - Invalid ItemDefinition returned from DetermineNextItemDef")
+--     end
+--   end
+
+--   if nextItemDef ~= nil then
+--     core.teamBotBrain.bPurchasedThisFrame = true
+    
+--     --open up slots if we don't have enough room in the stash + inventory
+--     local componentDefs = unitSelf:GetItemComponentsRemaining(nextItemDef)
+--     local slotsOpen = behaviorLib.NumberSlotsOpen(tInventory)
+
+--     if behaviorLib.printShopDebug then
+--       BotEcho("Component defs for "..nextItemDef:GetName()..":")
+--       core.printGetNameTable(componentDefs)
+--       BotEcho("Checking if we need to sell items...")
+--       BotEcho("  #components: "..#componentDefs.."  slotsOpen: "..slotsOpen)
+--     end
+
+--     if #componentDefs > slotsOpen + 1 then --1 for provisional slot
+--       behaviorLib.SellLowestItems(botBrain, #componentDefs - slotsOpen - 1)
+--     elseif #componentDefs == 0 then
+--       behaviorLib.ShuffleCombine(botBrain, nextItemDef, unitSelf)
+--     end
+
+--     local nGoldAmountBefore = botBrain:GetGold()
+    
+--     if nextItemDef ~= nil and unitSelf:GetItemCostRemaining(nextItemDef) < nGoldAmountBefore then
+--       unitSelf:PurchaseRemaining(nextItemDef)
+--     end
+
+--     local nGoldAmountAfter = botBrain:GetGold()
+--     bGoldReduced = (nGoldAmountAfter < nGoldAmountBefore)
+
+--     --Check to see if this purchased item has uncombined parts
+--     componentDefs = unitSelf:GetItemComponentsRemaining(nextItemDef)
+--     if #componentDefs == 0 then
+--       behaviorLib.ShuffleCombine(botBrain, nextItemDef, unitSelf)
+--     end
+--     behaviorLib.addItemBehavior(nextItemDef:GetName())
+--   end
+
+--   bShuffled = behaviorLib.SortInventoryAndStash(botBrain)
+  
+--   if not bGoldReduced and not bShuffled then
+--     if behaviorLib.printShopDebug then
+--       BotEcho("Finished Buying!")
+--     end
+    
+--     behaviorLib.finishedBuying = true
+--   end
 -- end
 
 
-
--- local function CourierExecute(botBrain)
-
-
-
-
--- end
-
-
--- CourierBehavior = {}
--- CourierBehavior["Utility"] = CourierUtility
--- CourierBehavior["Execute"] = CourierExecute
--- CourierBehavior["Name"] = "Courier"
--- tinsert(behaviorLib.tBehaviors, CourierBehavior)
-
-
-
-
-
-
+-- --ShopBehavior = {}
+-- behaviorLib.ShopBehavior["Utility"] = ShopUtilityOverride
+-- behaviorLib.ShopBehavior["Execute"] = ShopExecuteOverride
+-- --ShopBehavior["Name"] = "Shop"
+-- --tinsert(behaviorLib.tBehaviors, ShopBehavior)
 
 
 

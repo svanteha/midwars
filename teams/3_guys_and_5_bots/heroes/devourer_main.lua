@@ -481,9 +481,9 @@ object.oncombatevent = object.oncombateventOverride
 
 
 --items
-behaviorLib.StartingItems = {"Item_IronBuckler", "Item_RunesOfTheBlight", "Item_HealthPotion", "Item_CrushingClaws"}
+behaviorLib.StartingItems = {"Item_IronBuckler", "Item_HealthPotion", "Item_CrushingClaws"}
 behaviorLib.LaneItems =
-        {"Item_Bottle", "Item_Marchers", "Item_Strength5", "Item_MysticVestments"} -- Shield2 is HotBL
+        {"Item_Marchers", "Item_Strength5", "Item_MysticVestments"} -- Shield2 is HotBL
         behaviorLib.MidItems =
         {"Item_EnhancedMarchers", "Item_Beastheart" , "Item_Lifetube"}
         behaviorLib.LateItems =
