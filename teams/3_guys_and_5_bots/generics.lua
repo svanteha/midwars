@@ -52,7 +52,7 @@ local function CourierUtility(botBrain)
 local palautettava = 0
 
 local stashissaItem = false;
-local inventory = unitSelf:GetInventory(true)
+local inventory = core.unitSelf:GetInventory(true)
 local openSlots = NumberSlotsOpenStash(inventory)
 local matkalla = false
 
@@ -109,24 +109,25 @@ local function ShopUtilityOverride(botBrain)
 
   --just got into shop access, try buying
   if bCanAccessShop and not behaviorLib.canAccessShopLast then
-    --BotEcho("Open for shopping!")
-    behaviorLib.finishedBuying = false
-  end
+  --   --BotEcho("Open for shopping!")
+  --   behaviorLib.finishedBuying = false
+  -- end
 
-  behaviorLib.canAccessShopLast = bCanAccessShop
+  -- behaviorLib.canAccessShopLast = bCanAccessShop
 
-  local utility = 0
-  if bCanAccessShop and not behaviorLib.finishedBuying then
-    if not core.teamBotBrain.bPurchasedThisFrame then
-      utility = 99
-    end
-  end
+  -- local utility = 0
+  -- if bCanAccessShop and not behaviorLib.finishedBuying then
+  --   if not core.teamBotBrain.bPurchasedThisFrame then
+  --     core.BotEcho("Ostetaan")
+  --     utility = 99
+  --   end
+  -- end
 
-  if botBrain.bDebugUtility == true and utility ~= 0 then
-    BotEcho(format("  ShopUtility: %g", utility))
-  end
+  -- if botBrain.bDebugUtility == true and utility ~= 0 then
+  --   BotEcho(format("  ShopUtility: %g", utility))
+  -- end
 
-  return utility
+  return 100
 end
 
 
