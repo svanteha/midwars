@@ -78,6 +78,7 @@ function object:SkillBuild()
     skills.arrow = unitSelf:GetAbility(1)
     skills.leap = unitSelf:GetAbility(2)
     skills.ulti = unitSelf:GetAbility(3)
+    skills.courier = unitSelf:GetAbility(12)
     
     if skills.starstorm and skills.arrow and skills.leap and skills.ulti then
       bSkillsValid = true
@@ -334,7 +335,7 @@ local function ArrowUtility(botBrain)
   return 0
 end
 local function ArrowExecute(botBrain)
-  local javelin = skills.javelin
+  local javelin = skills.arrow
   if javelin and javelin:CanActivate() and arrowTarget then
     return core.OrderAbilityPosition(botBrain, javelin, arrowTarget)
   end
@@ -352,7 +353,7 @@ behaviorLib.StartingItems =
 behaviorLib.LaneItems =
         {"Item_Bottle","Item_PowerSupply", "Item_Marchers", "Item_EnhancedMarchers", "Item_Soulscream", "Item_Soulscream"} 
 behaviorLib.MidItems =
-        {"Item_WhisperingHelm", "Item_Wingbow"}
+        {"Item_WhisperingHelm", "Item_Wingbow", "Item_Evasion"}
 behaviorLib.LateItems =
         {"Item_LifeSteal4"} 
 
