@@ -115,7 +115,7 @@ function object:SkillBuild()
     skills.rot = unitSelf:GetAbility(1)
     skills.skin = unitSelf:GetAbility(2)
     skills.ulti = unitSelf:GetAbility(3)
-    
+    skills.courier = unitSelf:GetAbility(12)
     if skills.hook and skills.rot and skills.skin and skills.ulti then
       bSkillsValid = true
     else
@@ -233,16 +233,13 @@ local function RotEnableUtility(botBrain)
   local hasEffect = core.unitSelf:HasState("State_Devourer_Ability2_Self")
   local hasEnemiesClose = HasEnemiesInRange(core.unitSelf, rotRange)
   if rot:CanActivate() and hasEnemiesClose and not hasEffect then
-    return 100
+    return 50
   end
   return 0
 end
 local function RotEnableExecute(botBrain)
-
   local rot = skills.rot
   if rot and rot:CanActivate() then
-        core.BotEcho("ROTTIA KANSALLE")
-
     return core.OrderAbility(botBrain, rot)
   end
   return false
@@ -265,10 +262,8 @@ local function RotDisableUtility(botBrain)
   return 0
 end
 local function RotDisableExecute(botBrain)
-
   local rot = skills.rot
   if rot and rot:CanActivate() then
-       core.BotEcho("EI ROTTIA KANSALLE")
     return core.OrderAbility(botBrain, rot)
   end
   return false
@@ -360,6 +355,7 @@ tinsert(behaviorLib.tBehaviors, UltiBehavior)
       return 99
     end
     return 0
+
   end
   -- assisgn custom Harrass function to the behaviourLib object
   behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride 
@@ -460,7 +456,7 @@ behaviorLib.StartingItems = {"Item_IronBuckler", "Item_HealthPotion", "Item_Crus
 behaviorLib.LaneItems =
         {"Item_Marchers", "Item_Strength5", "Item_MysticVestments"} -- Shield2 is HotBL
         behaviorLib.MidItems =
-        {"Item_EnhancedMarchers", "Item_Beastheart" , "Item_Lifetube"}
+        {"Item_EnhancedMarchers", "Item_Bottle", "Item_Beastheart" , "Item_Lifetube"}
         behaviorLib.LateItems =
         {"Item_Excruciator", "Item_SolsBulwark", "Item_DaemonicBreastplate", "Item_Intelligence7", "Item_HealthMana2", "Item_BehemothsHeart"} --Excruciator is Barbed Armor, Item_Intelligence7 is staff, Item_HealthMana2 is icon
 

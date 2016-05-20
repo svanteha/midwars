@@ -77,7 +77,7 @@ function object:SkillBuild()
     skills.mana = unitSelf:GetAbility(1)
     skills.stun = unitSelf:GetAbility(2)
     skills.ulti = unitSelf:GetAbility(3)
-    
+    skills.courier = unitSelf:GetAbility(12)
     if skills.heal and skills.mana and skills.stun and skills.ulti then
       bSkillsValid = true
     else
