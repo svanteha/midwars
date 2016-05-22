@@ -98,25 +98,25 @@ function generics.CustomHarassUtility(target)
   if unitSelf:GetHealth() > target:GetHealth() then
      nUtil = nUtil + 10
   end
-  
+
   if target:IsChanneling() or target:IsDisarmed() or target:IsImmobilized() or target:IsPerplexed() or target:IsSilenced() or target:IsStunned() or unitSelf:IsStealth() then
     nUtil = nUtil + 50
   end
 
   local unitsNearby = core.AssessLocalUnits(object, myPos,100)
-  
-  
+
+
   if core.NumberElements(unitsNearby.AllyHeroes) == 0 then
-  
+
     if core.GetClosestEnemyTower(myPos, 720) then
       nUtil = nUtil - 100
     end
-    
+
     for id, creep in pairs(unitsNearby.EnemyCreeps) do
       local creepPos = creep:GetPosition()
       if(creep:GetAttackType() == "ranged" or Vector3.Distance2D(myPos, creepPos) < 20) then
         nUtil = nUtil - 20
-      end 
+      end
     end
   end
 
@@ -128,8 +128,8 @@ local function PositionSelfExecuteFix(botBrain)
 	local nCurrentTimeMS = HoN.GetGameTime()
 	local unitSelf = core.unitSelf
 	local vecMyPosition = unitSelf:GetPosition()
-	
-	if core.unitSelf:IsChanneling() then 
+
+	if core.unitSelf:IsChanneling() then
 		return
 	end
 
@@ -148,7 +148,7 @@ end
 behaviorLib.PositionSelfBehavior["Execute"] = PositionSelfExecuteFix
 
 local function PushExecuteFix(botBrain)
-	if core.unitSelf:IsChanneling() then 
+	if core.unitSelf:IsChanneling() then
 		return
 	end
 
@@ -171,15 +171,15 @@ local function PushExecuteFix(botBrain)
 
 		end
 	end
-	
+
 	if bActionTaken == false then
 		local vecDesiredPos = behaviorLib.PositionSelfLogic(botBrain)
 		if vecDesiredPos then
 			bActionTaken = behaviorLib.MoveExecute(botBrain, vecDesiredPos)
-			
+
 		end
 	end
-	
+
 	if bActionTaken == false then
 		return false
 	end
@@ -239,5 +239,15 @@ local function PositionSelfLogicOverride(botBrain)
   return FurthestPositionEarlyAdjust(PositionSelfLogicOld(botBrain))
 end
 behaviorLib.PositionSelfLogic = PositionSelfLogicOverride
+
+
+local ReturnToPoolOld = behaviorLib.HealAtWellBehavior["Utility"]
+local function ReturnToPool(botBrain)
+  if core.unitSelf:GetHealthPercent() < 20 then
+    return ReturnToPoolOld(botBrain)
+  end
+  return 0
+end
+behaviorLib.HealAtWellBehavior["Utility"] = ReturnToPool
 
 BotEcho("default generics done.")

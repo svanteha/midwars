@@ -97,28 +97,8 @@ behaviorLib.LaneItems = {"Item_Marchers", "Item_EnhancedMarchers", "Item_PowerSu
 behaviorLib.MidItems = {"Item_PortalKey", "Item_MagicArmor2"}
 behaviorLib.LateItems = {"Item_BehemothsHeart"}
 
-------------------------------------------------------
---            onthink override                      --
--- Called every bot tick, custom onthink code here  --
-------------------------------------------------------
--- @param: tGameVariables
--- @return: none
-function object:onthinkOverride(tGameVariables)
-  self:onthinkOld(tGameVariables)
-
-  -- custom code here
-end
-object.onthinkOld = object.onthink
-object.onthink = object.onthinkOverride
 
 local unitHooked = nil
-
-----------------------------------------------
---            oncombatevent override        --
--- use to check for infilictors (fe. buffs) --
-----------------------------------------------
--- @param: eventdata
--- @return: none
 function object:oncombateventOverride(EventData)
   self:oncombateventOld(EventData)
 
@@ -139,9 +119,7 @@ function object:oncombateventOverride(EventData)
       unitHooked = nil
     end
   end
-  -- custom code here
 end
--- override combat event trigger function.
 object.oncombateventOld = object.oncombatevent
 object.oncombatevent = object.oncombateventOverride
 

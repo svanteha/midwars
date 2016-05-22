@@ -65,6 +65,14 @@ core.tLanePreferences = {Jungle = 0, Mid = 5, ShortSolo = 4, LongSolo = 2, Short
 --------------------------------
 -- Skills
 --------------------------------
+-- Skillbuild table, 0=q, 1=w, 2=e, 3=r, 4=attri
+object.tSkills = {
+  1, 2, 0, 0, 0,
+  3, 0, 1, 1, 1,
+  3, 2, 2, 2, 4,
+  3, 4, 4, 4, 4,
+  4, 4, 4, 4, 4
+}
 local bSkillsValid = false
 function object:SkillBuild()
   local unitSelf = self.core.unitSelf
@@ -83,20 +91,14 @@ function object:SkillBuild()
     end
   end
 
-  if unitSelf:GetAbilityPointsAvailable() <= 0 then
+  local nPoints = unitSelf:GetAbilityPointsAvailable()
+  if nPoints <= 0 then
     return
   end
 
-  if skills.ulti:CanLevelUp() then
-    skills.ulti:LevelUp()
-  elseif skills.javelin:CanLevelUp() then
-    skills.javelin:LevelUp()
-  elseif skills.leap:CanLevelUp() then
-    skills.leap:LevelUp()
-  elseif skills.call:CanLevelUp() then
-    skills.call:LevelUp()
-  else
-    skills.attributeBoost:LevelUp()
+  local nLevel = unitSelf:GetLevel()
+  for i = nLevel, (nLevel + nPoints) do
+    unitSelf:GetAbility( self.tSkills[i] ):LevelUp()
   end
 end
 
@@ -159,7 +161,7 @@ end
 
 local function CustomHarassUtilityFnOverride(target)
   local nUtility = 0
-  
+
   local call = skills.call
   if call and call:CanActivate() then
     nUtility = nUtility + 10
@@ -195,7 +197,7 @@ behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
 
 local PositionSelfLogicOld = behaviorLib.PositionSelfLogic
 local function PositionSelfLogicOverride(botBrain)
-  local vecDesiredPos, unitTarget = PositionSelfLogicOld(botBrain)	
+  local vecDesiredPos, unitTarget = PositionSelfLogicOld(botBrain)
   vecDesiredPos = core.AdjustMovementForTowerLogic(vecDesiredPos)
   return vecDesiredPos, unitTarget
 end
