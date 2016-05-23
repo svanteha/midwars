@@ -46,48 +46,45 @@ local function NumberSlotsOpenStash(inventory)
   return numOpen
 end
 
--- --Send items with courier
+--Send items with courier
+local matkalla = false
+local function CourierUtility(botBrain)
+--Jos stashissä itemeitä palauta korkea arvo
+  
 
--- local function CourierUtility(botBrain)
--- --Jos stashissä itemeitä palauta korkea arvo
--- local palautettava = 0
+  local inventory = core.unitSelf:GetInventory(true)
+  local openSlots = NumberSlotsOpenStash(inventory)
 
--- local stashissaItem = false;
--- local inventory = core.unitSelf:GetInventory(true)
--- local openSlots = NumberSlotsOpenStash(inventory)
--- local matkalla = false
+  if matkalla then
+  
+    return 0
+  end
 
+  if openSlots ~= 6 then 
+   
+    matkalla = true
+    return 100
+    
+  end
 
--- if openSlots ~= 6 then 
--- palautettava = 100
--- matkalla = true
--- end
-
--- -- if matkalla then
--- --   BotEcho("matkalla")
--- --   return 0
--- end
-
--- BotEcho("lähetetään courier")
--- return palautettava
--- end
+  return 0
+end
 
 
 
--- local function CourierExecute(botBrain)
-
--- --Pitäs saada lähettää itemit courierilla
--- return core.OrderAbility(botBrain, skills.courier)
-
-
--- end
+local function CourierExecute(botBrain)
+  --Pitäs saada lähettää itemit courierilla
+  return core.OrderAbility(botBrain, skills.courier)
 
 
--- local CourierBehavior = {}
--- CourierBehavior["Utility"] = CourierUtility
--- CourierBehavior["Execute"] = CourierExecute
--- CourierBehavior["Name"] = "Courier"
--- tinsert(behaviorLib.tBehaviors, CourierBehavior)
+end
+
+
+local CourierBehavior = {}
+CourierBehavior["Utility"] = CourierUtility
+CourierBehavior["Execute"] = CourierExecute
+CourierBehavior["Name"] = "Courier"
+tinsert(behaviorLib.tBehaviors, CourierBehavior)
 
 
 
@@ -98,6 +95,8 @@ end
 local function ShopUtilityOverride(botBrain)
   behaviorLib.DetermineBuyState(botBrain)
 
+
+  
   --tarkastetaan, onko tarpeeksi rahaa ostaa item
    local nextItemDef = behaviorLib.DetermineNextItemDef(botBrain)
    local kultaMaara = botBrain:GetGold()
@@ -122,7 +121,6 @@ Current algorithm:
     C) Swap items to fill inventory, prioritizing...
        1. Boots / +ms
        2. Magic Armor
-       3. Homecoming Stone
        4. Most Expensive Item(s) (price decending)
 --]]
   if object.bUseShop == false then
@@ -149,21 +147,6 @@ Current algorithm:
   local bMyTeamHasHuman = core.MyTeamHasHuman()
   local bBuyTPStone = (core.nDifficulty ~= core.nEASY_DIFFICULTY) or bMyTeamHasHuman
 
-  --For our first frame of this execute
-  if bBuyTPStone and core.GetLastBehaviorName(botBrain) ~= core.GetCurrentBehaviorName(botBrain) then
-    if nextItemDef:GetName() ~= core.idefHomecomingStone:GetName() then   
-      --Seed a TP stone into the buy items after 1 min, Don't buy TP stones if we have Post Haste
-      local sName = "Item_HomecomingStone"
-      local nTime = HoN.GetMatchTime()
-      local tItemPostHaste = core.InventoryContains(tInventory, "Item_PostHaste", true)
-      if nTime > core.MinToMS(1) and #tItemPostHaste then
-        tinsert(behaviorLib.curItemList, 1, sName)
-      end
-      
-      nextItemDef = behaviorLib.DetermineNextItemDef(botBrain)
-    end
-  end
-  
   if behaviorLib.printShopDebug then
     BotEcho("============ BuyItems ============")
     if nextItemDef then
@@ -219,6 +202,8 @@ Current algorithm:
     
     behaviorLib.finishedBuying = true
   end
+  BotEcho("kakka")
+  return true
 end
 
 
