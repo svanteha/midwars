@@ -448,7 +448,7 @@ function object:oncombateventOverride(EventData)
     if EventData.Type == "Attack" then
       local victim = EventData.TargetUnit
       if victim:IsHero() then
-        core.AllChat("YOU'RE MINE!")
+        core.botEcho("YOU'RE MINE!")
         unitHooked = victim
       end
       elseif EventData.Type == "Projectile_Target" and EventData.TargetUnit:GetUniqueID() == core.unitSelf:GetUniqueID() then

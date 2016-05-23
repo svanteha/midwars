@@ -252,7 +252,6 @@ local function SlamUtility(botBrain)
     if target then
       local distanceEnemy = Vector3.Distance2DSq(core.unitSelf:GetPosition(), target:GetPosition())
       if distanceEnemy < 100000 then
-        core.BotEcho("should slam")
         return 50
       end
     end

@@ -15,6 +15,7 @@ local generics = object.generics
 
 BotEcho("loading default generics ..")
 
+behaviorLib.nPositionSelfAllySeparation = 500
 behaviorLib.tRuneToPick = nil
 behaviorLib.nRuneGrabRange = 2000
 -- 30 if there is rune within 1000 and we see it

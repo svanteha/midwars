@@ -48,8 +48,10 @@ local STATE_IDLE      = 0
 local STATE_GROUPING  = 1
 local STATE_PUSHING   = 2
 object.nPushState = STATE_IDLE
+
 function object:GroupAndPushLogic()
 	self:BuildLanes()
 	self.nPushState = STATE_PUSHING
 	self.unitPushTarget = core.enemyMainBaseStructure
 end
+
