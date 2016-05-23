@@ -193,13 +193,13 @@ local function HarassHeroExecuteOverride(botBrain)
 
     if ulti and ulti:CanActivate() then
       if dist < ultiRange then
-        core.BotEcho("ULTIIII!!!!")
+        
         bActionTaken = core.OrderAbilityEntity(botBrain, ulti, unitTarget)
       end
     end
 
     if not bActionTaken and skills.hold and skills.hold:CanActivate() then 
-      core.BotEcho("HOOOOOLLLDDDDD!!!!")
+      
      core.OrderAbilityEntity(botBrain, skills.hold, unitTarget)
    end
  end
@@ -261,7 +261,7 @@ local function CustomHarassUtilityFnOverride(target)
      nUtility = nUtility + 20
   end
 
-  return generics.CustomHarassUtility(target) + nUtility
+  return  nUtility
 end
 behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride
 
