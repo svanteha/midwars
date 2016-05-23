@@ -38,9 +38,9 @@ runfile "bots/teams/3_guys_and_5_bots/generics.lua"
 local core, eventsLib, behaviorLib, metadata, skills, generics = object.core, object.eventsLib, object.behaviorLib, object.metadata, object.skills, object.generics
 
 local print, ipairs, pairs, string, table, next, type, tinsert, tremove, tsort, format, tostring, tonumber, strfind, strsub
-  = _G.print, _G.ipairs, _G.pairs, _G.string, _G.table, _G.next, _G.type, _G.table.insert, _G.table.remove, _G.table.sort, _G.string.format, _G.tostring, _G.tonumber, _G.string.find, _G.string.sub
+= _G.print, _G.ipairs, _G.pairs, _G.string, _G.table, _G.next, _G.type, _G.table.insert, _G.table.remove, _G.table.sort, _G.string.format, _G.tostring, _G.tonumber, _G.string.find, _G.string.sub
 local ceil, floor, pi, tan, atan, atan2, abs, cos, sin, acos, max, random
-  = _G.math.ceil, _G.math.floor, _G.math.pi, _G.math.tan, _G.math.atan, _G.math.atan2, _G.math.abs, _G.math.cos, _G.math.sin, _G.math.acos, _G.math.max, _G.math.random
+= _G.math.ceil, _G.math.floor, _G.math.pi, _G.math.tan, _G.math.atan, _G.math.atan2, _G.math.abs, _G.math.cos, _G.math.sin, _G.math.acos, _G.math.max, _G.math.random
 
 local BotEcho, VerboseLog, BotLog = core.BotEcho, core.VerboseLog, core.BotLog
 local Clamp = core.Clamp
@@ -87,14 +87,14 @@ function object:SkillBuild()
   end
   
   if unitSelf:GetAbilityPointsAvailable() <= 0 then
-        return
-    end
-   
-    local nlev = unitSelf:GetLevel()
-    local nlevpts = unitSelf:GetAbilityPointsAvailable()
-    for i = nlev, nlev+nlevpts do
-        unitSelf:GetAbility( object.tSkills[i] ):LevelUp()
-    end
+    return
+  end
+
+  local nlev = unitSelf:GetLevel()
+  local nlevpts = unitSelf:GetAbilityPointsAvailable()
+  for i = nlev, nlev+nlevpts do
+    unitSelf:GetAbility( object.tSkills[i] ):LevelUp()
+  end
 end
 
 ------------------------------------------------------
@@ -119,6 +119,18 @@ object.onthink = object.onthinkOverride
 -- @return: none
 function object:oncombateventOverride(EventData)
   self:oncombateventOld(EventData)
+
+  if EventData.Type == "Attack" then
+    local unitTarget = EventData.TargetUnit
+    if EventData.InflictorName == "Projectile_Valkyrie_Ability2" and unitTarget:IsHero() then
+      local teamBotBrain = core.teamBotBrain
+      if teamBotBrain.SetTeamTarget then
+        core.BotEcho("VALK SENDING TARGETS")
+        teamBotBrain:SetTeamTarget(unitTarget)
+      end
+      core.AllChat("*BOOM* Skill shot!")
+    end
+  end
 
   -- custom code here
 end
@@ -170,7 +182,7 @@ local function ComboUtility(botBrain)
 end
 
 local function ComboExecute(botBrain)
-  
+
   --leap päälle, jos onnistuu, jatka
   local unitSelf = core.unitSelf
   local unitTarget = behaviorLib.heroTarget
@@ -184,7 +196,7 @@ local function ComboExecute(botBrain)
     bCombo = true
     core.OrderMoveToPos(botBrain, unitSelf, unitTarget:GetPosition())
     return core.OrderAbility(botBrain, skills.leap)
-end  
+  end  
 
   if skills.starstorm:CanActivate() then 
     bCombo = false
@@ -223,19 +235,19 @@ local function CustomHarassUtilityFnOverride(target)
  --   return 100
  -- end
 
-  if core.unitSelf:GetHealth() < 200 then
-     return -10000
-  end
+ if core.unitSelf:GetHealth() < 200 then
+   return -10000
+ end
 
-  
 
-  local unitsNearby = core.AssessLocalUnits(object, myPos,100)
+
+ local unitsNearby = core.AssessLocalUnits(object, myPos,100)
   --jos ei omia creeppejä 500 rangella, niin ei aggroa
   for id, creep in pairs(unitsNearby.EnemyCreeps) do
-      if(creep:GetAttackType() == "ranged" or Vector3.Distance2D(myPos, creep:GetPosition()) < 20) then
+    if(creep:GetAttackType() == "ranged" or Vector3.Distance2D(myPos, creep:GetPosition()) < 20) then
       core.DrawXPosition(creep:GetPosition())
-        return -10000
-      end 
+      return -10000
+    end 
   end
 
   return 0
@@ -271,13 +283,13 @@ local function HarassHeroExecuteOverride(botBrain)
   local nTargetDistanceSq = Vector3.Distance2DSq(vecMyPosition, vecTargetPosition)
 
   if core.CanSeeUnit(botBrain, unitTarget) and skills.starstorm:GetLevel() > 1 then
-                
-                        if skills.starstorm:CanActivate() and nTargetDistanceSq < (starstormRadius*starstormRadius) then
-                                
-                                        bActionTaken = core.OrderAbility(botBrain, skills.starstorm)
-                                
-                        end
-                
+
+    if skills.starstorm:CanActivate() and nTargetDistanceSq < (starstormRadius*starstormRadius) then
+
+      bActionTaken = core.OrderAbility(botBrain, skills.starstorm)
+
+    end
+
   end
 
 
@@ -348,13 +360,13 @@ tinsert(behaviorLib.tBehaviors, ArrowBehavior)
 
 
 behaviorLib.StartingItems = 
-        {"Item_HealthPotion", "Item_MinorTotem", "Item_MinorTotem", "Item_DuckBoots", "Item_DuckBoots"}
+{"Item_HealthPotion", "Item_MinorTotem", "Item_MinorTotem", "Item_DuckBoots", "Item_DuckBoots"}
 behaviorLib.LaneItems =
-        {"Item_Bottle","Item_PowerSupply", "Item_Marchers", "Item_EnhancedMarchers", "Item_Soulscream", "Item_Soulscream"} 
+{"Item_Bottle","Item_PowerSupply", "Item_Marchers", "Item_EnhancedMarchers", "Item_Soulscream", "Item_Soulscream"} 
 behaviorLib.MidItems =
-        {"Item_WhisperingHelm", "Item_Wingbow", "Item_Evasion"}
+{"Item_WhisperingHelm", "Item_Wingbow", "Item_Evasion"}
 behaviorLib.LateItems =
-        {"Item_LifeSteal4"} 
+{"Item_LifeSteal4"} 
 
 BotEcho('finished loading devourer_main')
 

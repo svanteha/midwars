@@ -275,6 +275,41 @@ SlamBehavior["Execute"] = SlamExecute
 SlamBehavior["Name"] = "Slam"
 tinsert(behaviorLib.tBehaviors, SlamBehavior)
 
+local function AttackCreepsUtilityOverride(botBrain)  
+  local nDenyVal = -100
+  local nLastHitVal = -100
+  local nUtility = 0
+
+  -- Don't deny while pushing
+  local unitDenyTarget = core.unitAllyCreepTarget
+  if core.GetCurrentBehaviorName(botBrain) == "Push" then
+    unitDenyTarget = nil
+  end
+  
+  local unitTarget = behaviorLib.GetCreepAttackTarget(botBrain, core.unitEnemyCreepTarget, unitDenyTarget)
+  
+  if unitTarget then --[[and core.unitSelf:IsAttackReady() then]]
+    if unitTarget:GetTeam() == core.myTeam then
+      nUtility = nDenyVal
+    else
+      nUtility = nLastHitVal
+    end
+    
+    core.unitCreepTarget = unitTarget
+  end
+
+  if botBrain.bDebugUtility == true and nUtility ~= 0 then
+    BotEcho(format("  AttackCreepsUtility: %g", nUtility))
+  end
+
+  return nUtility
+end
+
+behaviorLib.AttackCreepsBehavior["Utility"] = AttackCreepsUtilityOverride
+
+
+
+
 --items
 behaviorLib.StartingItems = {"Item_IronBuckler", "Item_HealthPotion", "Item_DuckBoots"}
 behaviorLib.LaneItems =
