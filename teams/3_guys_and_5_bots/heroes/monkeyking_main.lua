@@ -115,7 +115,6 @@ local function CustomHarassHeroUtilityFnOverride(hero)
   local unitEnemy = GetLowestHPEnemy()
   behaviorLib.heroTarget = unitEnemy
   if unitEnemy and unitEnemy:GetHealthPercent() < 0.5 then
-    core.BotEcho("LET'S GOOOO")
     nUtil = 70
     return nUtil
   end
@@ -208,7 +207,6 @@ local function ComboUtility(botBrain)
     local enemyPos = heroTarget:GetPosition()
     local distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
     if distanceEnemy < maxDistanceSq then
-      core.BotEcho("CO-CO-COMBOO")
       return 100
     end
   end
