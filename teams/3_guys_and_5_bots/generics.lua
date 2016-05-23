@@ -31,8 +31,8 @@ local function NumberSlotsOpenStash(inventory)
   return numOpen
 end
 
+
 --Send items with courier
-local matkalla = false
 local function CourierUtility(botBrain)
 --Jos stashissä itemeitä palauta korkea arvo
   
@@ -40,16 +40,30 @@ local function CourierUtility(botBrain)
   local inventory = core.unitSelf:GetInventory(true)
   local openSlots = NumberSlotsOpenStash(inventory)
 
-  if matkalla then
-  
-    return 0
+  --käydään kaikki unitit läpi, jos on olemassa oma courier, niin palautetaan 0, koska silloin courier on liikkellä
+  --jos haluat optimoida, laita katsomaan pienemmältä alueelta kuin 100000 :D silloin pitää tosin pistää muistiin courierin state
+
+ for id,unit in pairs (HoN.GetUnitsInRadius(core.allyWell:GetPosition(), 100000, core.UNIT_MASK_ALIVE + core.UNIT_MASK_UNIT)) do
+    local nimi = unit:GetTypeName()
+    local id = unit:GetOwnerPlayerID()
+    
+    if nimi == "Pet_AutomatedCourier" and id == core.unitSelf:GetOwnerPlayerID() then 
+      
+      return 0
+      
+    end
+
   end
+  
+
+
+
+
+
+ 
 
   if openSlots ~= 6 then 
-   
-    matkalla = true
     return 100
-    
   end
 
   return 0
@@ -58,9 +72,9 @@ end
 
 
 local function CourierExecute(botBrain)
-  --Pitäs saada lähettää itemit courierilla
+  --lähettää itemit courierilla
+  
   return core.OrderAbility(botBrain, skills.courier)
-
 
 end
 
@@ -80,8 +94,6 @@ tinsert(behaviorLib.tBehaviors, CourierBehavior)
 local function ShopUtilityOverride(botBrain)
   behaviorLib.DetermineBuyState(botBrain)
 
-
-  
   --tarkastetaan, onko tarpeeksi rahaa ostaa item
    local nextItemDef = behaviorLib.DetermineNextItemDef(botBrain)
    local kultaMaara = botBrain:GetGold()
@@ -187,16 +199,15 @@ Current algorithm:
     
     behaviorLib.finishedBuying = true
   end
-  BotEcho("kakka")
+  
   return true
 end
 
 
---ShopBehavior = {}
+
 behaviorLib.ShopBehavior["Utility"] = ShopUtilityOverride
 behaviorLib.ShopBehavior["Execute"] = ShopExecuteOverride
---ShopBehavior["Name"] = "Shop"
---tinsert(behaviorLib.tBehaviors, ShopBehavior)
+
 
 
 

@@ -126,6 +126,11 @@ behaviorLib.PickRuneBehavior["Utility"] = PickRuneUtilityOverride
 function object:onthinkOverride(tGameVariables)
   self:onthinkOld(tGameVariables)
 
+  -- for id,unit in pairs (HoN.GetUnitsInRadius(core.allyWell:GetPosition(), 1000, core.UNIT_MASK_ALIVE + core.UNIT_MASK_UNIT)) do
+  --   BotEcho(unit:GetTypeName())
+  --   BotEcho(unit:GetOwnerPlayerID())
+  -- end
+  -- core.printTable(HoN.GetUnitsInRadius(core.unitSelf:GetPosition(), 600, core.UNIT_MASK_ALIVE + core.UNIT_MASK_UNIT))
   -- custom code here
 end
 object.onthinkOld = object.onthink
@@ -138,6 +143,7 @@ object.onthink = object.onthinkOverride
 -- @param: eventdata
 -- @return: none
 function object:oncombateventOverride(EventData)
+  -- eventsLib.printCombatEvent(EventData)
   self:oncombateventOld(EventData)
 
   if EventData.Type == "Attack" then
