@@ -330,11 +330,11 @@ tinsert(behaviorLib.tBehaviors, ArrowBehavior)
 
 behaviorLib.StartingItems = {"Item_MinorTotem", "Item_MinorTotem", "Item_HealthPotion", "Item_ManaBattery"}
 behaviorLib.LaneItems =
-{"Item_PowerSupply", "Item_Marchers", "Item_EnhancedMarchers", "Item_Soulscream", "Item_Soulscream"} 
+{"Item_PowerSupply", "Item_Marchers", "Item_Steamboots"} 
 behaviorLib.MidItems =
-{"Item_WhisperingHelm", "Item_Wingbow", "Item_Evasion"}
+{"Item_Glowstone", "Item_Warhammer", "3 Item_Pierce", "Item_Protect"}
 behaviorLib.LateItems =
-{"Item_LifeSteal4"} 
+{"4 Item_Critical1", "Item_Wingbow", "Item_Evasion", "Item_Voulge", "Item_Weapon3"} 
 
 BotEcho('finished loading devourer_main')
 
