@@ -15,6 +15,7 @@ local generics = object.generics
 
 BotEcho("loading default generics ..")
 
+behaviorLib.nPositionSelfAllySeparation = 500
 
 --tsekkaa montako open slottia stashish on
 local function NumberSlotsOpenStash(inventory)
