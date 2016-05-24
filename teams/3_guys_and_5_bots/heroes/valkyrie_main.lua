@@ -151,10 +151,8 @@ function object:oncombateventOverride(EventData)
     if EventData.InflictorName == "Projectile_Valkyrie_Ability2" and unitTarget:IsHero() then
       local teamBotBrain = core.teamBotBrain
       if teamBotBrain.SetTeamTarget then
-        core.BotEcho("VALK SENDING TARGETS")
         teamBotBrain:SetTeamTarget(unitTarget)
       end
-      core.AllChat("*BOOM* Skill shot!")
     end
   end
 
@@ -164,79 +162,24 @@ end
 object.oncombateventOld = object.oncombatevent
 object.oncombatevent = object.oncombateventOverride
 
---function behaviorLib.CustomRetreatExecute(botBrain)
- -- local leap = skills.leap
- -- local unitSelf = core.unitSelf
-  --local unitTarget = behaviorLib.heroTarget
-
-
-  
-
- -- if leap and leap:CanActivate() and angle < 0.5 then
-    --return core.OrderAbility(botBrain, leap)
-  --end
-  --return false
---end
-
-
-
-
-
-local bCombo = false
-local function ComboUtility(botBrain)
-
+function behaviorLib.CustomRetreatExecute(botBrain)
+  local leap = skills.leap
   local unitSelf = core.unitSelf
-  local unitTarget = behaviorLib.heroTarget
-  
-  
-  if unitTarget == nil then
-    return 0
+  local unitsNearby = core.AssessLocalUnits(botBrain, unitSelf:GetPosition(), 500)
+
+  if unitSelf:GetHealthPercent() < 0.3 and core.NumberElements(unitsNearby.EnemyHeroes) > 0 then
+    local ulti = skills.ulti
+    if ulti and ulti:CanActivate() then
+      return core.OrderAbility(botBrain, ulti)
+    end
+    local angle = core.HeadingDifference(unitSelf, core.allyMainBaseStructure:GetPosition())
+    if leap and leap:CanActivate() and angle < 0.5 then
+      return core.OrderAbility(botBrain, leap)
+    end
   end
-  local facing = core.HeadingDifference(unitSelf, unitTarget:GetPosition())
-
-  if bCombo then
-    return 100
-  end
-
-  --jos starstorm valmiina ja lvl 3, leappaa päälle ja castaa se
-  local manacost = (skills.leap:GetManaCost() + skills.starstorm:GetManaCost())
-
-  if (skills.starstorm:CanActivate() and skills.starstorm:GetLevel() >=3 and skills.leap:CanActivate() and (core.unitSelf:GetMana() >=  manacost) and Vector3.Distance2D(unitSelf:GetPosition(), unitTarget:GetPosition()) < skills.leap:GetRange() + skills.starstorm:GetRange() and facing < 0.3) then
-    return 100
-  end
-  return 0
-end
-
-local function ComboExecute(botBrain)
-
-  --leap päälle, jos onnistuu, jatka
-  local unitSelf = core.unitSelf
-  local unitTarget = behaviorLib.heroTarget
-  
-  
-  
-  local facing = core.HeadingDifference(unitSelf, unitTarget:GetPosition())
-
-
-  if skills.leap:CanActivate() then
-    bCombo = true
-    core.OrderMoveToPos(botBrain, unitSelf, unitTarget:GetPosition())
-    return core.OrderAbility(botBrain, skills.leap)
-  end  
-
-  if skills.starstorm:CanActivate() then 
-    bCombo = false
-    return core.OrderAbility(botBrain, skills.starstorm)
-  end
-
   return false
 end
 
-local ComboBehavior = {}
-ComboBehavior["Utility"] = ComboUtility
-ComboBehavior["Execute"] = ComboExecute
-ComboBehavior["Name"] = "Combo!"
-tinsert(behaviorLib.tBehaviors, ComboBehavior)
 
 local function CustomHarassUtilityFnOverride(target)
   local nUtil = 0
@@ -348,7 +291,7 @@ local function DetermineArrowTarget(arrow)
     local distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
     core.DrawXPosition(enemyPos, "yellow", 50)
     if distanceEnemy < maxDistanceSq then
-      if distanceEnemy < distanceTarget and hook_arrow.IsFreeLine(myPos, enemyPos) then
+      if distanceEnemy < distanceTarget and generics.IsFreeLine(myPos, enemyPos) then
         unitTarget = unitEnemy
         distanceTarget = distanceEnemy
       end
@@ -359,9 +302,9 @@ end
 
 local arrowTarget = nil
 local function ArrowUtility(botBrain)
-  local javelin = skills.javelin
-  if javelin and javelin:CanActivate() then
-    local unitTarget = DetermineArrowTarget(javelin)
+  local arrow = skills.arrow
+  if arrow and arrow:CanActivate() then
+    local unitTarget = DetermineArrowTarget(arrow)
     if unitTarget then
       arrowTarget = unitTarget:GetPosition()
       core.DrawXPosition(arrowTarget, "green", 50)
@@ -372,9 +315,9 @@ local function ArrowUtility(botBrain)
   return 0
 end
 local function ArrowExecute(botBrain)
-  local javelin = skills.arrow
-  if javelin and javelin:CanActivate() and arrowTarget then
-    return core.OrderAbilityPosition(botBrain, javelin, arrowTarget)
+  local arrow = skills.arrow
+  if arrow and arrow:CanActivate() and arrowTarget then
+    return core.OrderAbilityPosition(botBrain, arrow, arrowTarget)
   end
   return false
 end
@@ -387,7 +330,7 @@ tinsert(behaviorLib.tBehaviors, ArrowBehavior)
 
 behaviorLib.StartingItems = {"Item_MinorTotem", "Item_MinorTotem", "Item_HealthPotion", "Item_ManaBattery"}
 behaviorLib.LaneItems =
-{"Item_Bottle","Item_PowerSupply", "Item_Marchers", "Item_EnhancedMarchers", "Item_Soulscream", "Item_Soulscream"} 
+{"Item_PowerSupply", "Item_Marchers", "Item_EnhancedMarchers", "Item_Soulscream", "Item_Soulscream"} 
 behaviorLib.MidItems =
 {"Item_WhisperingHelm", "Item_Wingbow", "Item_Evasion"}
 behaviorLib.LateItems =
