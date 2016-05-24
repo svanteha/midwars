@@ -57,7 +57,7 @@ core.tLanePreferences = {Jungle = 0, Mid = 5, ShortSolo = 4, LongSolo = 2, Short
 --------------------------------
 -- Skills
 --------------------------------
--- table listing desired skillbuild. 0=Q(starstorm), 1=W(arrow), 2=E(leap), 3=R(ulti), 4=AttributeBoost
+-- table listing desired skillbuild. 0=Q(call), 1=W(javelin), 2=E(leap), 3=R(ulti), 4=AttributeBoost
 object.tSkills = {
 2, 0, 0, 1, 0,
 1, 0, 1, 1, 3,
@@ -73,13 +73,13 @@ function object:SkillBuild()
   local unitSelf = self.core.unitSelf
 
   if not bSkillsValid then
-    skills.starstorm = unitSelf:GetAbility(0)
-    skills.arrow = unitSelf:GetAbility(1)
+    skills.call = unitSelf:GetAbility(0)
+    skills.javelin = unitSelf:GetAbility(1)
     skills.leap = unitSelf:GetAbility(2)
     skills.ulti = unitSelf:GetAbility(3)
     skills.courier = unitSelf:GetAbility(12)
     
-    if skills.starstorm and skills.arrow and skills.leap and skills.ulti then
+    if skills.call and skills.javelin and skills.leap and skills.ulti then
       bSkillsValid = true
     else
       return
@@ -98,25 +98,6 @@ function object:SkillBuild()
 end
 
 
-
-behaviorLib.tRuneToPick = nil
-behaviorLib.nRuneGrabRange = 2000
--- 30 if there is rune within 1000 and we see it
-local function PickRuneUtilityOverride(botBrain)
-  local rune = core.teamBotBrain.GetNearestRune(core.unitSelf:GetPosition(), true)
-  if rune == nil or Vector3.Distance2DSq(rune.vecLocation, core.unitSelf:GetPosition()) > behaviorLib.nRuneGrabRange * behaviorLib.nRuneGrabRange then
-    return 0
-  end
-
-  behaviorLib.tRuneToPick = rune
-
-  return 70
-end
-behaviorLib.PickRuneBehavior["Utility"] = PickRuneUtilityOverride
-
-
-
-
 ------------------------------------------------------
 --            onthink override                      --
 -- Called every bot tick, custom onthink code here  --
@@ -126,11 +107,6 @@ behaviorLib.PickRuneBehavior["Utility"] = PickRuneUtilityOverride
 function object:onthinkOverride(tGameVariables)
   self:onthinkOld(tGameVariables)
 
-  -- for id,unit in pairs (HoN.GetUnitsInRadius(core.allyWell:GetPosition(), 1000, core.UNIT_MASK_ALIVE + core.UNIT_MASK_UNIT)) do
-  --   BotEcho(unit:GetTypeName())
-  --   BotEcho(unit:GetOwnerPlayerID())
-  -- end
-  -- core.printTable(HoN.GetUnitsInRadius(core.unitSelf:GetPosition(), 600, core.UNIT_MASK_ALIVE + core.UNIT_MASK_UNIT))
   -- custom code here
 end
 object.onthinkOld = object.onthink
@@ -143,7 +119,6 @@ object.onthink = object.onthinkOverride
 -- @param: eventdata
 -- @return: none
 function object:oncombateventOverride(EventData)
-  -- eventsLib.printCombatEvent(EventData)
   self:oncombateventOld(EventData)
 
   if EventData.Type == "Attack" then
@@ -153,10 +128,10 @@ function object:oncombateventOverride(EventData)
       if teamBotBrain.SetTeamTarget then
         teamBotBrain:SetTeamTarget(unitTarget)
       end
+      core.AllChat("*BOOM* Skill shot!")
     end
   end
 
-  -- custom code here
 end
 -- override combat event trigger function.
 object.oncombateventOld = object.oncombatevent
@@ -180,92 +155,37 @@ function behaviorLib.CustomRetreatExecute(botBrain)
   return false
 end
 
-
 local function CustomHarassUtilityFnOverride(target)
-  local nUtil = 0
-  local creepLane = core.GetFurthestCreepWavePos(core.tMyLane, core.bTraverseForward)
-  local myPos = core.unitSelf:GetPosition()
+  local nUtility = 0
 
-
-
-  --jos potu käytössä niin ei agroilla
-  if core.unitSelf:HasState(core.idefHealthPotion.stateName) then
-
-    return -10000
+  local call = skills.call
+  if call and call:CanActivate() then
+    nUtility = nUtility + 10
   end
 
-  --jos tornin rangella ni ei mennä
-  if core.GetClosestEnemyTower(myPos, 720) then
-
-    return -10000
-  end
-
- --  if target and target:GetHealth() < 250 and core.unitSelf:GetHealth() > 400 then
- --   return 100
- -- end
-
- if core.unitSelf:GetHealth() < 200 then
-   return -10000
- end
-
-
-
- local unitsNearby = core.AssessLocalUnits(object, myPos,100)
-  --jos ei omia creeppejä 500 rangella, niin ei aggroa
-  for id, creep in pairs(unitsNearby.EnemyCreeps) do
-    if(creep:GetAttackType() == "ranged" or Vector3.Distance2D(myPos, creep:GetPosition()) < 20) then
-      core.DrawXPosition(creep:GetPosition())
-      return -10000
-    end 
-  end
-
-  return 0
-  --if core.NumberElements(unitsNearby.AllyCreeps) == 0 then
-  --   return 0
-  --  end
-
-  --if unitTarget and unitTarget:GetHealth() < 250 and core.unitSelf:GetHealth() > 400 then
-  --  return 100
-  --end
-
-
-
-  --return nUtil
+  return generics.CustomHarassUtility(target) + nUtility
 end
 behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride
 
 local function HarassHeroExecuteOverride(botBrain)
   local unitTarget = behaviorLib.heroTarget
-  local bActionTaken = false
-
   if unitTarget == nil or not unitTarget:IsValid() then
     return false --can not execute, move on to the next behavior
   end
 
-  
   local unitSelf = core.unitSelf
 
-  local starstormRadius = 600
-  local vecMyPosition = unitSelf:GetPosition()
-  local vecTargetPosition = unitTarget:GetPosition()
 
-  local nTargetDistanceSq = Vector3.Distance2DSq(vecMyPosition, vecTargetPosition)
+  local bActionTaken = false
 
-  if core.CanSeeUnit(botBrain, unitTarget) and skills.starstorm:GetLevel() > 1 then
-
-    if skills.starstorm:CanActivate() and nTargetDistanceSq < (starstormRadius*starstormRadius) then
-
-      bActionTaken = core.OrderAbility(botBrain, skills.starstorm)
-
-    end
-
+  local call = skills.call
+  if call and call:CanActivate() and Vector3.Distance2D(unitTarget:GetPosition(), unitSelf:GetPosition()) < 650 then
+    bActionTaken = core.OrderAbility(botBrain, call)
   end
-
 
   if not bActionTaken then
     return object.harassExecuteOld(botBrain)
   end
-  return bActionTaken
 end
 
 object.harassExecuteOld = behaviorLib.HarassHeroBehavior["Execute"]
@@ -273,7 +193,7 @@ behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
 
 local PositionSelfLogicOld = behaviorLib.PositionSelfLogic
 local function PositionSelfLogicOverride(botBrain)
-  local vecDesiredPos, unitTarget = PositionSelfLogicOld(botBrain)  
+  local vecDesiredPos, unitTarget = PositionSelfLogicOld(botBrain)
   vecDesiredPos = core.AdjustMovementForTowerLogic(vecDesiredPos)
   return vecDesiredPos, unitTarget
 end
@@ -284,14 +204,22 @@ local function DetermineArrowTarget(arrow)
   local maxDistance = arrow:GetRange()
   local maxDistanceSq = maxDistance * maxDistance
   local myPos = core.unitSelf:GetPosition()
+  local teamBotBrain = core.teamBotBrain
+  if teamBotBrain.GetTeamTarget then
+    local teamTarget = teamBotBrain:GetTeamTarget()
+    if teamTarget then
+      if generics.IsFreeLine(myPos, teamTarget:GetPosition()) then
+        return teamTarget
+      end
+    end
+  end
   local unitTarget = nil
   local distanceTarget = 999999999
   for _, unitEnemy in pairs(tLocalEnemies) do
     local enemyPos = unitEnemy:GetPosition()
     local distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
-    core.DrawXPosition(enemyPos, "yellow", 50)
     if distanceEnemy < maxDistanceSq then
-      if distanceEnemy < distanceTarget and generics.IsFreeLine(myPos, enemyPos) then
+      if distanceEnemy < distanceTarget and generics.IsFreeLine(myPos, enemyPos, true) then
         unitTarget = unitEnemy
         distanceTarget = distanceEnemy
       end
@@ -302,12 +230,12 @@ end
 
 local arrowTarget = nil
 local function ArrowUtility(botBrain)
-  local arrow = skills.arrow
-  if arrow and arrow:CanActivate() then
-    local unitTarget = DetermineArrowTarget(arrow)
+  local javelin = skills.javelin
+  if javelin and javelin:CanActivate() then
+    local unitTarget = DetermineArrowTarget(javelin)
     if unitTarget then
       arrowTarget = unitTarget:GetPosition()
-      core.DrawXPosition(arrowTarget, "green", 50)
+
       return 60
     end
   end
@@ -315,9 +243,9 @@ local function ArrowUtility(botBrain)
   return 0
 end
 local function ArrowExecute(botBrain)
-  local arrow = skills.arrow
-  if arrow and arrow:CanActivate() and arrowTarget then
-    return core.OrderAbilityPosition(botBrain, arrow, arrowTarget)
+  local javelin = skills.javelin
+  if javelin and javelin:CanActivate() and arrowTarget then
+    return core.OrderAbilityPosition(botBrain, javelin, arrowTarget)
   end
   return false
 end
@@ -332,9 +260,9 @@ behaviorLib.StartingItems = {"2 Item_MinorTotem", "Item_HealthPotion", "Item_Man
 behaviorLib.LaneItems =
 {"Item_PowerSupply", "Item_Marchers", "Item_Steamboots"} 
 behaviorLib.MidItems =
-{"Item_Glowstone", "Item_Warhammer", "Item_Pierce", "Item_Protect"}
+{"Item_Glowstone", "Item_Pierce 3", "Item_Protect"}
 behaviorLib.LateItems =
-{"4 Item_Critical1", "Item_Wingbow", "Item_Evasion", "Item_Voulge", "Item_Weapon3"} 
+{"Item_Critical1 4", "Item_Wingbow", "Item_Evasion", "Item_Voulge", "Item_Weapon3"} 
 
 BotEcho('finished loading devourer_main')
 

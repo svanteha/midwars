@@ -451,8 +451,7 @@ function object:oncombateventOverride(EventData)
     if EventData.Type == "Attack" then
       local victim = EventData.TargetUnit
       if victim:IsHero() then
-        core.botEcho("YOU'RE MINE!")
-        unitHooked = victim
+                unitHooked = victim
       end
       elseif EventData.Type == "Projectile_Target" and EventData.TargetUnit:GetUniqueID() == core.unitSelf:GetUniqueID() then
         if unitHooked then
@@ -509,10 +508,10 @@ behaviorLib.AttackCreepsBehavior["Utility"] = AttackCreepsUtilityOverride
 --items
 behaviorLib.StartingItems = {"Item_IronBuckler", "Item_ManaBattery", "Item_MinorTotem", "Item_HealthPotion"}
 behaviorLib.LaneItems =
-        {"Item_Marchers", "Item_PowerSupply", "Item_MysticVestments"} -- Shield2 is HotBL
+        {"Item_PowerSupply", "Item_Marchers", "Item_MysticVestments"} -- Shield2 is HotBL
         behaviorLib.MidItems =
-        {"Item_Steamboots", "Item_Beastheart", "Item_Lifetube", "Item_Glowstone", "Item_SolsBulwark"}
+        {"Item_Steamboots", "Item_Beastheart", "Item_Shield2", "Item_SolsBulwark"}
         behaviorLib.LateItems =
-        {"Item_DaemonicBreastplate", "Item_Protect", "Item_BehemothsHeart", "Item_Morph"} --Excruciator is Barbed Armor, Item_Intelligence7 is staff, Item_HealthMana2 is icon
+        {"Item_DaemonicBreastplate", "Item_BehemothsHeart", "Item_Wingbow", "Item_Evasion", "Item_Protect"}
 
         BotEcho('finished loading devourer_main')
