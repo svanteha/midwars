@@ -115,7 +115,7 @@ local function CustomHarassHeroUtilityFnOverride(hero)
   local unitEnemy = GetLowestHPEnemy()
   behaviorLib.heroTarget = unitEnemy
   if unitEnemy and unitEnemy:GetHealthPercent() < 0.5 then
-    nUtil = 70
+    nUtil = 40
     return nUtil
   end
   return object.HarassUtilityOld(hero)
@@ -207,7 +207,7 @@ local function ComboUtility(botBrain)
     local enemyPos = heroTarget:GetPosition()
     local distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
     if distanceEnemy < maxDistanceSq then
-      return 100
+      return 50
     end
   end
   return 0
@@ -252,7 +252,7 @@ local function SlamUtility(botBrain)
     if target then
       local distanceEnemy = Vector3.Distance2DSq(core.unitSelf:GetPosition(), target:GetPosition())
       if distanceEnemy < 100000 then
-        return 50
+        return 30
       end
     end
   end
@@ -308,7 +308,7 @@ behaviorLib.AttackCreepsBehavior["Utility"] = AttackCreepsUtilityOverride
 
 
 --items
-behaviorLib.StartingItems = {"Item_IronBuckler", "Item_HealthPotion", "Item_DuckBoots"}
+behaviorLib.StartingItems = {"Item_MinorTotem", "Item_MinorTotem", "Item_HealthPotion", "Item_ManaBattery"}
 behaviorLib.LaneItems =
         {"Item_Bottle", "Item_Marchers", "Item_Soulscream"} -- Shield2 is HotBL
         behaviorLib.MidItems =

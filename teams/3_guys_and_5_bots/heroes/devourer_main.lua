@@ -505,20 +505,12 @@ end
 behaviorLib.AttackCreepsBehavior["Utility"] = AttackCreepsUtilityOverride
 
 
-
-behaviorLib.StartingItems = {"Item_ManaBattery", "2 Item_MinorTotem", "Item_HealthPotion", "Item_RunesOfTheBlight"}
-behaviorLib.LaneItems = {"Item_Marchers", "Item_EnhancedMarchers", "Item_PowerSupply"}
-behaviorLib.MidItems = {"Item_PortalKey", "Item_MagicArmor2"}
-behaviorLib.LateItems = {"Item_BehemothsHeart"}
-
-
---items
---behaviorLib.StartingItems = {"Item_IronBuckler", "Item_HealthPotion", "Item_CrushingClaws"}
---behaviorLib.LaneItems =
-  --      {"Item_Marchers", "Item_Strength5", "Item_MysticVestments"} -- Shield2 is HotBL
-    --    behaviorLib.MidItems =
-      --  {"Item_EnhancedMarchers", "Item_Bottle", "Item_Beastheart" , "Item_Lifetube"}
-        --behaviorLib.LateItems =
-        --{"Item_Excruciator", "Item_SolsBulwark", "Item_DaemonicBreastplate", "Item_Intelligence7", "Item_HealthMana2", "Item_BehemothsHeart"} --Excruciator is Barbed Armor, Item_Intelligence7 is staff, Item_HealthMana2 is icon
+behaviorLib.StartingItems = {"Item_IronBuckler", "Item_MinorTotem", "Item_HealthPotion", "Item_ManaBattery"}
+behaviorLib.LaneItems =
+        {"Item_Marchers", "Item_Strength5", "Item_MysticVestments"} -- Shield2 is HotBL
+        behaviorLib.MidItems =
+        {"Item_EnhancedMarchers", "Item_Bottle", "Item_Beastheart" , "Item_Lifetube"}
+        behaviorLib.LateItems =
+        {"Item_Excruciator", "Item_SolsBulwark", "Item_DaemonicBreastplate", "Item_Intelligence7", "Item_HealthMana2", "Item_BehemothsHeart"} --Excruciator is Barbed Armor, Item_Intelligence7 is staff, Item_HealthMana2 is icon
 
         BotEcho('finished loading devourer_main')
