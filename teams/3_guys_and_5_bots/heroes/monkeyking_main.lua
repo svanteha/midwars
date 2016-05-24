@@ -96,6 +96,20 @@ function object:SkillBuild()
     end
 end
 
+function behaviorLib.CustomRetreatExecute(botBrain)
+  local dash = skills.dash
+  local unitSelf = core.unitSelf
+  local unitsNearby = core.AssessLocalUnits(botBrain, unitSelf:GetPosition(), 500)
+
+  if unitSelf:GetHealthPercent() < 0.3 and core.NumberElements(unitsNearby.EnemyHeroes) > 0 then
+    local angle = core.HeadingDifference(unitSelf, core.allyMainBaseStructure:GetPosition())
+    if dash and dash:CanActivate() and angle < 0.5 then
+      return core.OrderAbility(botBrain, dash)
+    end
+  end
+  return false
+end
+
 local function GetLowestHPEnemy() 
   local tLocalEnemies = core.CopyTable(core.localUnits["EnemyHeroes"])
   local HP = 1
@@ -113,8 +127,8 @@ end
 local function CustomHarassHeroUtilityFnOverride(hero)
   local nUtil = 0
   local unitEnemy = GetLowestHPEnemy()
-  behaviorLib.heroTarget = unitEnemy
-  if unitEnemy and unitEnemy:GetHealthPercent() < 0.5 then
+  if unitEnemy and unitEnemy:GetHealthPercent() < 0.2 then
+    behaviorLib.heroTarget = unitEnemy
     nUtil = 40
     return nUtil
   end
