@@ -328,7 +328,7 @@ ArrowBehavior["Name"] = "Arrowing"
 tinsert(behaviorLib.tBehaviors, ArrowBehavior)
 
 
-behaviorLib.StartingItems = {"Item_MinorTotem", "Item_MinorTotem", "Item_HealthPotion", "Item_ManaBattery"}
+behaviorLib.StartingItems = {"2 Item_MinorTotem", "Item_HealthPotion", "Item_ManaBattery"}
 behaviorLib.LaneItems =
 {"Item_PowerSupply", "Item_Marchers", "Item_Steamboots"} 
 behaviorLib.MidItems =
