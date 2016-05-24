@@ -505,12 +505,9 @@ end
 behaviorLib.AttackCreepsBehavior["Utility"] = AttackCreepsUtilityOverride
 
 
-<<<<<<< HEAD
-behaviorLib.StartingItems = {"Item_IronBuckler", "Item_MinorTotem", "Item_HealthPotion", "Item_ManaBattery"}
-=======
+
 --items
 behaviorLib.StartingItems = {"Item_IronBuckler", "Item_ManaBattery", "Item_MinorTotem", "Item_HealthPotion"}
->>>>>>> Itemien muutoksia
 behaviorLib.LaneItems =
         {"Item_Marchers", "Item_PowerSupply", "Item_MysticVestments"} -- Shield2 is HotBL
         behaviorLib.MidItems =
