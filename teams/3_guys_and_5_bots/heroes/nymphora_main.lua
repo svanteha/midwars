@@ -136,7 +136,7 @@ local function ComboUtility(botBrain)
     local enemyPos = core.unitSelf:GetPosition()
     local distanceEnemy = Vector3.Distance2DSq(myPos, enemyPos)
     if distanceEnemy < maxDistanceSq then
-      return 100
+      return 60
     end
   end
   return 0
@@ -203,9 +203,9 @@ ManaBehavior["Name"] = "Mana"
 tinsert(behaviorLib.tBehaviors, ManaBehavior)
 
 --items
-behaviorLib.StartingItems = {"Item_MinorTotem", "Item_MinorTotem", "Item_HealthPotion", "Item_MarkOfTheNovice"}
+behaviorLib.StartingItems = {"Item_MinorTotem", "Item_MinorTotem", "Item_HealthPotion", "Item_ManaBattery"}
 behaviorLib.LaneItems =
-        {"Item_Bottle", "Item_Intelligence5", "Item_Marchers", "Item_Intelligence5"} -- Shield2 is HotBL
+        {"Item_Intelligence5", "Item_Marchers", "Item_Intelligence5"} -- Shield2 is HotBL
         behaviorLib.MidItems =
         {"Item_EnhancedMarchers", "Item_GraveLocket" , "Item_Lightning1"}
         behaviorLib.LateItems =
