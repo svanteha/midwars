@@ -304,9 +304,9 @@ core.harassExecuteOld = behaviorLib.HarassHeroBehavior["Execute"]
 behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
 
 --items
-behaviorLib.StartingItems = {"Item_MinorTotem", "Item_MinorTotem", "Item_ManaBattery", "Item_HealthPotion", "Item_PretendersCrown"}
+behaviorLib.StartingItems = {"Item_MinorTotem", "Item_MinorTotem", "Item_ManaBattery", "2 Item_HealthPotion"}
 behaviorLib.LaneItems =
-        {"Item_Marchers", "Item_PowerSupply", "Item_Steamboots", "Item_GraveLocket"}
+        {"Item_Marchers", "Item_PowerSupply", "Item_Steamboots"}
         behaviorLib.MidItems =
         {"Item_Glowstone", "Item_Lifetube", "Item_Protect", "Item_Weapon1", "Item_Weapon1", "Item_Weapon1"}
         behaviorLib.LateItems =
