@@ -505,12 +505,17 @@ end
 behaviorLib.AttackCreepsBehavior["Utility"] = AttackCreepsUtilityOverride
 
 
+<<<<<<< HEAD
 behaviorLib.StartingItems = {"Item_IronBuckler", "Item_MinorTotem", "Item_HealthPotion", "Item_ManaBattery"}
+=======
+--items
+behaviorLib.StartingItems = {"Item_IronBuckler", "Item_ManaBattery", "Item_MinorTotem", "Item_HealthPotion"}
+>>>>>>> Itemien muutoksia
 behaviorLib.LaneItems =
-        {"Item_Marchers", "Item_Strength5", "Item_MysticVestments"} -- Shield2 is HotBL
+        {"Item_Marchers", "Item_PowerSupply", "Item_MysticVestments"} -- Shield2 is HotBL
         behaviorLib.MidItems =
-        {"Item_EnhancedMarchers", "Item_Bottle", "Item_Beastheart" , "Item_Lifetube"}
+        {"Item_Steamboots", "Item_Beastheart", "Item_Lifetube", "Item_Glowstone", "Item_SolsBulwark"}
         behaviorLib.LateItems =
-        {"Item_Excruciator", "Item_SolsBulwark", "Item_DaemonicBreastplate", "Item_Intelligence7", "Item_HealthMana2", "Item_BehemothsHeart"} --Excruciator is Barbed Armor, Item_Intelligence7 is staff, Item_HealthMana2 is icon
+        {"Item_Nullstone", "Item_DaemonicBreastplate", "Item_Protect", "Item_BehemothsHeart", "Item_Morph"} --Excruciator is Barbed Armor, Item_Intelligence7 is staff, Item_HealthMana2 is icon
 
         BotEcho('finished loading devourer_main')

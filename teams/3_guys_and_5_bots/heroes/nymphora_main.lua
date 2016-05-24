@@ -203,13 +203,19 @@ ManaBehavior["Name"] = "Mana"
 tinsert(behaviorLib.tBehaviors, ManaBehavior)
 
 --items
+<<<<<<< HEAD
 behaviorLib.StartingItems = {"Item_MinorTotem", "Item_MinorTotem", "Item_HealthPotion", "Item_ManaBattery"}
 behaviorLib.LaneItems =
         {"Item_Intelligence5", "Item_Marchers", "Item_Intelligence5"} -- Shield2 is HotBL
+=======
+behaviorLib.StartingItems = {"Item_MinorTotem", "Item_MinorTotem", "Item_ManaBattery", "Item_GuardianRing", "Item_HealthPotion"}
+behaviorLib.LaneItems =
+        {"Item_ManaRegen3", "Item_Marchers", "Item_PowerSupply", "Item_Steamboots"}
+>>>>>>> Itemien muutoksia
         behaviorLib.MidItems =
-        {"Item_EnhancedMarchers", "Item_GraveLocket" , "Item_Lightning1"}
+        {"Item_Glowstone", "Item_Lifetube", "Item_Manatube", "Item_Protect", "Item_LifeSteal5"}
         behaviorLib.LateItems =
-        {"Item_Protect", "Item_ArclightCrown"}
+        {"Item_Protect", "Item_Lightning1", "Item_Morph", "Item_BehemothsHeart", "4 Item_Critical1"}
 
 
 BotEcho('finished loading nymphora_main')

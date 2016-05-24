@@ -303,4 +303,14 @@ end
 core.harassExecuteOld = behaviorLib.HarassHeroBehavior["Execute"]
 behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
 
+--items
+behaviorLib.StartingItems = {"Item_MinorTotem", "Item_MinorTotem", "Item_ManaBattery", "Item_HealthPotion", "Item_PretendersCrown"}
+behaviorLib.LaneItems =
+        {"Item_Marchers", "Item_PowerSupply", "Item_Steamboots", "Item_GraveLocket"}
+        behaviorLib.MidItems =
+        {"Item_Glowstone", "Item_Lifetube", "Item_Manatube", "Item_Protect", "Item_Weapon1", "Item_Weapon1", "Item_Weapon1"}
+        behaviorLib.LateItems =
+        {"4 Item_Critical1", "Item_Voulge", "Item_Weapon3", "Item_LifeSteal4"}
+
+
 BotEcho('finished loading puppetmaster_main')
