@@ -15,6 +15,9 @@ local generics = object.generics
 
 BotEcho("loading default generics ..")
 
+behaviorLib.nMaxLevelDifference = 0
+behaviorLib.nEnemyBaseThreat = 0
+
 local oncombateventOld = object.oncombatevent
 local function oncombateventCustom(botBrain, EventData)
   oncombateventOld(botBrain, EventData)
@@ -36,6 +39,7 @@ end
 object.oncombatevent = oncombateventCustom
 
 behaviorLib.nPathEnemyTowerMul = 100
+behaviorLib.nPathEnemyTerritoryMul = 0
 
 local function PassiveState()
   local tLane = core.tMyLane
@@ -49,7 +53,7 @@ local function PassiveState()
     local distanceAlly = Vector3.Distance2D(creepPos, towerPos)
     local distanceEnemy = Vector3.Distance2D(creepPos, otherTowerPos)
     --BotEcho("DA:"..distanceAlly..";DE:"..distanceEnemy)
-    if (distanceAlly < distanceEnemy and distanceEnemy < 2500) or (distanceAlly > distanceEnemy and distanceAlly < 2500) then
+    if (distanceAlly < distanceEnemy and distanceEnemy < 2300) or (distanceAlly > distanceEnemy and distanceAlly < 2300) then
       return true
     end
   end
