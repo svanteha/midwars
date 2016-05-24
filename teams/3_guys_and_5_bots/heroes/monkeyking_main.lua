@@ -328,6 +328,6 @@ behaviorLib.LaneItems =
         behaviorLib.MidItems =
         {"Item_Lifetube", "Item_Protect"}
         behaviorLib.LateItems =
-        {"Item_Sicarius", "Item_StrengthAgility","Item_Critical1", "Item_Critical1", "Item_Critical1", "Item_Critical1", "Item_Wingbow", "Item_Doombringer"}
+        {"Item_Sicarius", "Item_StrengthAgility","Item_Critical1", "Item_Critical1", "Item_Critical1", "Item_Critical1", "Item_Wingbow", "Item_Weapon3"}
 
 BotEcho('finished loading monkeyking_main')
