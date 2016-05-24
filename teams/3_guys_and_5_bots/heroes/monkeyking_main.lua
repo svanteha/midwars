@@ -324,7 +324,7 @@ behaviorLib.AttackCreepsBehavior["Utility"] = AttackCreepsUtilityOverride
 --items
 behaviorLib.StartingItems = {"Item_IronBuckler", "Item_ManaBattery", "Item_MinorTotem", "Item_HealthPotion"}
 behaviorLib.LaneItems =
-        {"Item_Marchers", "Item_PowerSupply", "Item_Punchdagger", "Item_Punchdagger", "Item_Glowstone"}
+        {"Item_Marchers", "Item_PowerSupply", "Item_EnhancedMarchers", "Item_Glowstone"}
         behaviorLib.MidItems =
         {"Item_Lifetube", "Item_Protect"}
         behaviorLib.LateItems =
