@@ -5,7 +5,7 @@ http://tkt-hon.github.io/midwars/
 
     Alias "create_midwars_botmatch_1v1" "set teambotmanager_legion; set teambotmanager_hellbourne; BotDebugEnable; StartGame practice test mode:botmatch map:midwars teamsize:1 spectators:1 allowduplicate:true; g_botDifficulty 3; g_camDistanceMax 10000; g_camDistanceMaxSpectator 10000;"
 
-    Alias "newgame" "set teambotmanager_legion; set teambotmanager_hellbourne; BotDebugEnable; StartGame practice test mode:botmatch map:midwars teamsize:5 spectators:1 allowduplicate:true; g_botDifficulty 3; g_camDistanceMax 10000; g_camDistanceMaxSpectator 10000;"
+    Alias "newgame" "set teambotmanager_legion; set teambotmanager_hellbourne; BotDebugEnable; StartGame practice test mode:botmatch map:midwars teamsize:5 spectators:1 allowduplicate:true; g_botDifficulty 3; g_camDistanceMax 10000; g_camDistanceMaxSpectator 10000;legion_add_bots;hellbourme_add_bots"
 
 ## Teams
 
@@ -15,7 +15,8 @@ http://tkt-hon.github.io/midwars/
 
     Alias "hellbourme_add_bots" "set teambotmanager_default; AddBot 2 Default_Devourer; AddBot 2 Default_MonkeyKing; AddBot 2 Default_Nymphora; AddBot 2 Default_PuppetMaster; AddBot 2 Default_Valkyrie"
 
-
+    Alias "newgamewithoutbots" "set teambotmanager_legion; set teambotmanager_hellbourne; BotDebugEnable; StartGame practice test mode:botmatch map:midwars teamsize:5 spectators:1 allowduplicate:true; g_botDifficulty 3; g_camDistanceMax 10000; g_camDistanceMaxSpectator 10000;"
+    
 
 ### Load single bot made by us
     Alias "monkeyking_add" "set teambotmanager_legion 3_guys_and_5_bots; AddBot 1 3_guys_and_5_bots_MonkeyKing;

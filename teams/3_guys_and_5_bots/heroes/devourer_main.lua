@@ -348,17 +348,20 @@ tinsert(behaviorLib.tBehaviors, UltiBehavior)
 ------------------------------------------------------
 -- @param: IunitEntity hero
 -- @return: number
-local function CustomHarassUtilityFnOverride(hero)
+local function CustomHarassUtilityOverride(target)
+  local nUtility = 0
 
-    -- Tarkista tornirange jossain vaiheessa 
-    if skills.ulti:CanActivate() and skills.ulti:GetManaCost() < core.unitSelf:GetMana() then
-      return 99
-    end
-    return 0
-
+  if skills.hook:CanActivate() then
+    nUtility = nUtility + 10
   end
-  -- assisgn custom Harrass function to the behaviourLib object
-  behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride 
+
+  if skills.ulti:CanActivate() then
+    nUtility = nUtility + 40
+  end
+
+  return generics.CustomHarassUtility(target) + nUtility
+end
+behaviorLib.CustomHarassUtility = CustomHarassUtilityOverride
 
   -- Harass hero
   local function HarassHeroExecuteOverride(botBrain)
@@ -502,13 +505,20 @@ end
 behaviorLib.AttackCreepsBehavior["Utility"] = AttackCreepsUtilityOverride
 
 
+
+behaviorLib.StartingItems = {"Item_ManaBattery", "2 Item_MinorTotem", "Item_HealthPotion", "Item_RunesOfTheBlight"}
+behaviorLib.LaneItems = {"Item_Marchers", "Item_EnhancedMarchers", "Item_PowerSupply"}
+behaviorLib.MidItems = {"Item_PortalKey", "Item_MagicArmor2"}
+behaviorLib.LateItems = {"Item_BehemothsHeart"}
+
+
 --items
-behaviorLib.StartingItems = {"Item_IronBuckler", "Item_HealthPotion", "Item_CrushingClaws"}
-behaviorLib.LaneItems =
-        {"Item_Marchers", "Item_Strength5", "Item_MysticVestments"} -- Shield2 is HotBL
-        behaviorLib.MidItems =
-        {"Item_EnhancedMarchers", "Item_Bottle", "Item_Beastheart" , "Item_Lifetube"}
-        behaviorLib.LateItems =
-        {"Item_Excruciator", "Item_SolsBulwark", "Item_DaemonicBreastplate", "Item_Intelligence7", "Item_HealthMana2", "Item_BehemothsHeart"} --Excruciator is Barbed Armor, Item_Intelligence7 is staff, Item_HealthMana2 is icon
+--behaviorLib.StartingItems = {"Item_IronBuckler", "Item_HealthPotion", "Item_CrushingClaws"}
+--behaviorLib.LaneItems =
+  --      {"Item_Marchers", "Item_Strength5", "Item_MysticVestments"} -- Shield2 is HotBL
+    --    behaviorLib.MidItems =
+      --  {"Item_EnhancedMarchers", "Item_Bottle", "Item_Beastheart" , "Item_Lifetube"}
+        --behaviorLib.LateItems =
+        --{"Item_Excruciator", "Item_SolsBulwark", "Item_DaemonicBreastplate", "Item_Intelligence7", "Item_HealthMana2", "Item_BehemothsHeart"} --Excruciator is Barbed Armor, Item_Intelligence7 is staff, Item_HealthMana2 is icon
 
         BotEcho('finished loading devourer_main')
