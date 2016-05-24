@@ -5,6 +5,8 @@ runfile 'bots/teambot/teambotbrain.lua'
 
 object.myName = '3_bots_and_5_guys Team'
 
+local core = object.core
+
 ------------------------------------------------------
 --            onthink override                      --
 -- Called every bot tick, custom onthink code here  --
