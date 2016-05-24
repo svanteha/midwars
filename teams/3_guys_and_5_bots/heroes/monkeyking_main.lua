@@ -127,7 +127,7 @@ end
 local function CustomHarassHeroUtilityFnOverride(hero)
   local nUtil = 0
   local unitEnemy = GetLowestHPEnemy()
-  if unitEnemy and unitEnemy:GetHealthPercent() < 0.2 then
+  if unitEnemy and unitEnemy:GetHealthPercent() < 0.3 then
     behaviorLib.heroTarget = unitEnemy
     nUtil = 40
     return nUtil
