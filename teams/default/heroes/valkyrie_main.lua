@@ -129,7 +129,7 @@ function object:oncombateventOverride(EventData)
     local unitTarget = EventData.TargetUnit
     if EventData.InflictorName == "Projectile_Valkyrie_Ability2" and unitTarget:IsHero() then
       local teamBotBrain = core.teamBotBrain
-      if teamBotBrain.SetTeamTarget then
+      if teamBotBrain and teamBotBrain.SetTeamTarget then
         teamBotBrain:SetTeamTarget(unitTarget)
       end
       core.AllChat("*BOOM* Skill shot!")
@@ -265,5 +265,24 @@ ArrowBehavior["Utility"] = ArrowUtility
 ArrowBehavior["Execute"] = ArrowExecute
 ArrowBehavior["Name"] = "Arrowing"
 tinsert(behaviorLib.tBehaviors, ArrowBehavior)
+
+
+local PositionSelfLogicOld = behaviorLib.PositionSelfLogic
+local function PositionSelfLogicOverride(botBrain)
+  local pos = PositionSelfLogicOld(botBrain)
+  local originalPos = core.unitSelf:GetPosition()
+  local pos2 = nil
+  for _, node in pairs(generics.GetOwnSkillshotSpots()) do
+    local nodePos = node:GetPosition()
+    if Vector3.Distance2D(nodePos, pos) < 2000 then
+      if not pos2 or Vector3.Distance2D(pos2, originalPos) > Vector3.Distance2D(nodePos, originalPos) then
+        pos = nodePos
+        pos2 = nodePos
+      end
+    end
+  end
+  return pos
+end
+behaviorLib.PositionSelfLogic = PositionSelfLogicOverride
 
 BotEcho('finished loading valkyrie_main')

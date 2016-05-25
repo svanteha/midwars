@@ -15,6 +15,41 @@ local generics = object.generics
 
 BotEcho("loading default generics ..")
 
+local skillshot_spots_file = "/bots/teams/default/metadata/skillshot_spots.botmetadata"
+local function RegisterSkillshots()
+  if not metadata.tMetadataFileNames[skillshot_spots_file] then
+    metadata.tMetadataFileNames[skillshot_spots_file] = true
+    BotEcho("Trying to register \""..skillshot_spots_file.."\"")
+    BotMetaData.RegisterLayer(skillshot_spots_file)
+  end
+end
+
+function generics.GetOwnSkillshotSpots()
+  metadata.SetActiveLayer(skillshot_spots_file)
+  local tNodes = BotMetaData.GetAllNodes()
+  metadata.SetActiveLayer(metadata.MapMetadataFile)
+  local tOwnNodes = {}
+  local team = nil
+  if core.myTeam == HoN.GetLegionTeam() then
+    team = "legion"
+  else
+    team = "hellbourne"
+  end
+  for _, node in pairs(tNodes) do
+    if node:GetProperty("zone") == team then
+      tinsert(tOwnNodes, node)
+    end
+  end
+  return tOwnNodes
+end
+
+local onthinkOld = object.onthink
+local function onthinkOverride(botBrain, tGameVariables)
+  onthinkOld(botBrain, tGameVariables)
+  RegisterSkillshots()
+end
+object.onthink = onthinkOverride
+
 behaviorLib.nMaxLevelDifference = 0
 behaviorLib.nEnemyBaseThreat = 0
 
