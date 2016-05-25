@@ -16,7 +16,7 @@ local generics = object.generics
 BotEcho("loading default generics ..")
 
 --alunperin tämä oli 250, voisi ehkä olla isompi kuin 500
-behaviorLib.nPositionSelfAllySeparation = 500
+behaviorLib.nPositionSelfAllySeparation = 700
 
 --tsekkaa montako open slottia stashish on
 local function NumberSlotsOpenStash(inventory)
