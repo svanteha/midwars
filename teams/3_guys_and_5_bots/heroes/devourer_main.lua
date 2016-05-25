@@ -363,6 +363,29 @@ local function CustomHarassUtilityOverride(target)
 end
 behaviorLib.CustomHarassUtility = CustomHarassUtilityOverride
 
+
+
+
+-- local function CustomHarassHeroUtilityFnOverride(hero)
+
+--   local enemyShop = core.enemyFountain
+--   local enemyShopPos = enemyShop:GetPosition()
+--   local omaPos = core.unitSelf:GetPosition()
+--   local etaisyys = Vector3.Distance2DSq(omaPos, enemyShopPos)
+
+ 
+  
+--   if etaisyys < 1200 then
+--     return 0
+--   end
+
+
+--   return object.HarassUtilityOld(hero)
+-- end
+-- -- assisgn custom Harrass function to the behaviourLib object
+-- object.HarassUtilityOld = behaviorLib.HarassHeroBehavior["Utility"]
+-- behaviorLib.HarassHeroBehavior["Utility"] = CustomHarassHeroUtilityFnOverride 
+
   -- Harass hero
   local function HarassHeroExecuteOverride(botBrain)
     local hook = skills.hook
@@ -421,6 +444,13 @@ behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
 -- @param: tGameVariables
 -- @return: none
 function object:onthinkOverride(tGameVariables)
+
+ -- for id,unit in pairs (HoN.GetUnitsInRadius(core.allyWell:GetPosition(), 100000, core.UNIT_MASK_ALIVE + core.UNIT_MASK_UNIT)) do
+ --    BotEcho(id, unit)
+ --    local nimi = unit:GetTypeName()
+ --    local id = unit:GetOwnerPlayerID()
+ -- end
+
  self:onthinkOld(tGameVariables)
 
 end

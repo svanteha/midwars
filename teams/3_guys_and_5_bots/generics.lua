@@ -18,6 +18,9 @@ BotEcho("loading default generics ..")
 --alunperin tämä oli 250, voisi ehkä olla isompi kuin 500
 behaviorLib.nPositionSelfAllySeparation = 500
 
+
+
+
 --tsekkaa montako open slottia stashish on
 local function NumberSlotsOpenStash(inventory)
 
@@ -55,15 +58,8 @@ local function CourierUtility(botBrain)
       
     end
 
-  end
+ end
   
-
-
-
-
-
- 
-
   if openSlots ~= 6 then 
     return 100
   end
