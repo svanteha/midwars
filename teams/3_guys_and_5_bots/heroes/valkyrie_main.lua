@@ -143,14 +143,17 @@ function behaviorLib.CustomRetreatExecute(botBrain)
   local unitsNearby = core.AssessLocalUnits(botBrain, unitSelf:GetPosition(), 500)
 
   if unitSelf:GetHealthPercent() < 0.3 and core.NumberElements(unitsNearby.EnemyHeroes) > 0 then
+    local angle = core.HeadingDifference(unitSelf, core.allyMainBaseStructure:GetPosition())
+
+    if leap and leap:CanActivate() and angle < 0.5 then
+      return core.OrderAbility(botBrain, leap)
+    end
+    
     local ulti = skills.ulti
     if ulti and ulti:CanActivate() then
       return core.OrderAbility(botBrain, ulti)
     end
-    local angle = core.HeadingDifference(unitSelf, core.allyMainBaseStructure:GetPosition())
-    if leap and leap:CanActivate() and angle < 0.5 then
-      return core.OrderAbility(botBrain, leap)
-    end
+
   end
   return false
 end
