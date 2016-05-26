@@ -348,43 +348,44 @@ tinsert(behaviorLib.tBehaviors, UltiBehavior)
 ------------------------------------------------------
 -- @param: IunitEntity hero
 -- @return: number
-local function CustomHarassUtilityOverride(target)
-  local nUtility = 0
+-- local function CustomHarassUtilityOverride(target)
+--   local nUtility = 0
 
-  if skills.hook:CanActivate() then
-    nUtility = nUtility + 10
-  end
+--   if skills.hook:CanActivate() then
+--     nUtility = nUtility + 10
+--   end
 
-  if skills.ulti:CanActivate() then
-    nUtility = nUtility + 40
-  end
+--   if skills.ulti:CanActivate() then
+--     nUtility = nUtility + 40
+--   end
 
-  return generics.CustomHarassUtility(target) + nUtility
-end
-behaviorLib.CustomHarassUtility = CustomHarassUtilityOverride
-
-
+--   return generics.CustomHarassUtility(target) + nUtility
+-- end
+-- behaviorLib.CustomHarassUtility = CustomHarassUtilityOverride
 
 
--- local function CustomHarassHeroUtilityFnOverride(hero)
 
---   local enemyShop = core.enemyFountain
---   local enemyShopPos = enemyShop:GetPosition()
---   local omaPos = core.unitSelf:GetPosition()
---   local etaisyys = Vector3.Distance2DSq(omaPos, enemyShopPos)
+
+local function CustomHarassHeroUtilityFnOverride(hero)
+
+  local enemyShop = core.enemyWell
+  local enemyShopPos = enemyShop:GetPosition()
+  local omaPos = core.unitSelf:GetPosition()
+  local etaisyys = Vector3.Distance2DSq(omaPos, enemyShopPos)
 
  
   
---   if etaisyys < 1200 then
---     return 0
---   end
+  if etaisyys < 1200 then
+    
+    return 0
+  end
 
 
---   return object.HarassUtilityOld(hero)
--- end
--- -- assisgn custom Harrass function to the behaviourLib object
--- object.HarassUtilityOld = behaviorLib.HarassHeroBehavior["Utility"]
--- behaviorLib.HarassHeroBehavior["Utility"] = CustomHarassHeroUtilityFnOverride 
+  return object.HarassUtilityOld(hero)
+end
+
+object.HarassUtilityOld = behaviorLib.HarassHeroBehavior["Utility"]
+behaviorLib.HarassHeroBehavior["Utility"] = CustomHarassHeroUtilityFnOverride 
 
   -- Harass hero
   local function HarassHeroExecuteOverride(botBrain)

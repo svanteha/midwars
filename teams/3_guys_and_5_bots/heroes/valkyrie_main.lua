@@ -128,7 +128,7 @@ function object:oncombateventOverride(EventData)
       if teamBotBrain.SetTeamTarget then
         teamBotBrain:SetTeamTarget(unitTarget)
       end
-      core.AllChat("*BOOM* Skill shot!")
+      
     end
   end
 
@@ -143,14 +143,17 @@ function behaviorLib.CustomRetreatExecute(botBrain)
   local unitsNearby = core.AssessLocalUnits(botBrain, unitSelf:GetPosition(), 500)
 
   if unitSelf:GetHealthPercent() < 0.3 and core.NumberElements(unitsNearby.EnemyHeroes) > 0 then
+    local angle = core.HeadingDifference(unitSelf, core.allyMainBaseStructure:GetPosition())
+
+    if leap and leap:CanActivate() and angle < 0.5 then
+      return core.OrderAbility(botBrain, leap)
+    end
+    
     local ulti = skills.ulti
     if ulti and ulti:CanActivate() then
       return core.OrderAbility(botBrain, ulti)
     end
-    local angle = core.HeadingDifference(unitSelf, core.allyMainBaseStructure:GetPosition())
-    if leap and leap:CanActivate() and angle < 0.5 then
-      return core.OrderAbility(botBrain, leap)
-    end
+
   end
   return false
 end
@@ -166,29 +169,6 @@ local function CustomHarassUtilityFnOverride(target)
   return generics.CustomHarassUtility(target) + nUtility
 end
 behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride
-
-
-
--- local function CustomHarassHeroUtilityFnOverride(hero)
-
---   local enemyShop = core.enemyFountain
---   local enemyShopPos = enemyShop:GetPosition()
---   local omaPos = core.unitSelf:GetPosition()
---   local etaisyys = Vector3.Distance2DSq(omaPos, enemyShopPos)
-
- 
-  
---   if etaisyys < 1200 then
---     return 0
---   end
-
-
---   return object.HarassUtilityOld(hero)
--- end
--- -- assisgn custom Harrass function to the behaviourLib object
--- object.HarassUtilityOld = behaviorLib.HarassHeroBehavior["Utility"]
--- behaviorLib.HarassHeroBehavior["Utility"] = CustomHarassHeroUtilityFnOverride 
-
 
 local function HarassHeroExecuteOverride(botBrain)
   local unitTarget = behaviorLib.heroTarget
@@ -285,7 +265,6 @@ behaviorLib.LaneItems =
 behaviorLib.MidItems =
 {"Item_Glowstone", "Item_Pierce 3", "Item_Protect"}
 behaviorLib.LateItems =
-{"Item_Wingbow", "Item_Evasion", "Item_Voulge", "Item_Weapon3", "Item_Critical1 4"} 
+{"Item_Critical1 4", "Item_Wingbow", "Item_Evasion", "Item_Voulge", "Item_Weapon3"} 
 
 BotEcho('finished loading devourer_main')
-

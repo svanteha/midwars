@@ -4,9 +4,9 @@ local object = _G.object
 local core, eventsLib, behaviorLib, metadata, skills = object.core, object.eventsLib, object.behaviorLib, object.metadata, object.skills
 
 local print, ipairs, pairs, string, table, next, type, tinsert, tremove, tsort, format, tostring, tonumber, strfind, strsub
-  = _G.print, _G.ipairs, _G.pairs, _G.string, _G.table, _G.next, _G.type, _G.table.insert, _G.table.remove, _G.table.sort, _G.string.format, _G.tostring, _G.tonumber, _G.string.find, _G.string.sub
+= _G.print, _G.ipairs, _G.pairs, _G.string, _G.table, _G.next, _G.type, _G.table.insert, _G.table.remove, _G.table.sort, _G.string.format, _G.tostring, _G.tonumber, _G.string.find, _G.string.sub
 local ceil, floor, pi, tan, atan, atan2, abs, cos, sin, acos, max, random
-  = _G.math.ceil, _G.math.floor, _G.math.pi, _G.math.tan, _G.math.atan, _G.math.atan2, _G.math.abs, _G.math.cos, _G.math.sin, _G.math.acos, _G.math.max, _G.math.random
+= _G.math.ceil, _G.math.floor, _G.math.pi, _G.math.tan, _G.math.atan, _G.math.atan2, _G.math.abs, _G.math.cos, _G.math.sin, _G.math.acos, _G.math.max, _G.math.random
 
 local BotEcho, VerboseLog, BotLog = core.BotEcho, core.VerboseLog, core.BotLog
 
@@ -16,7 +16,7 @@ local generics = object.generics
 BotEcho("loading default generics ..")
 
 --alunperin tämä oli 250, voisi ehkä olla isompi kuin 500
-behaviorLib.nPositionSelfAllySeparation = 500
+behaviorLib.nPositionSelfAllySeparation = 700
 
 
 
@@ -40,20 +40,20 @@ end
 --Send items with courier
 local function CourierUtility(botBrain)
 --Jos stashissä itemeitä palauta korkea arvo
-  
 
-  local inventory = core.unitSelf:GetInventory(true)
-  local openSlots = NumberSlotsOpenStash(inventory)
+
+local inventory = core.unitSelf:GetInventory(true)
+local openSlots = NumberSlotsOpenStash(inventory)
 
   --käydään kaikki unitit läpi, jos on olemassa oma courier, niin palautetaan 0, koska silloin courier on liikkellä
   --jos haluat optimoida, laita katsomaan pienemmältä alueelta kuin 100000 :D silloin pitää tosin pistää muistiin courierin state
 
- for id,unit in pairs (HoN.GetUnitsInRadius(core.allyWell:GetPosition(), 100000, core.UNIT_MASK_ALIVE + core.UNIT_MASK_UNIT)) do
+  for id,unit in pairs (HoN.GetUnitsInRadius(core.allyWell:GetPosition(), 100000, core.UNIT_MASK_ALIVE + core.UNIT_MASK_UNIT)) do
     local nimi = unit:GetTypeName()
     local id = unit:GetOwnerPlayerID()
     
     if nimi == "Pet_AutomatedCourier" and id == core.unitSelf:GetOwnerPlayerID() then 
-      
+
       return 0
       
     end
@@ -93,13 +93,13 @@ local function ShopUtilityOverride(botBrain)
   behaviorLib.DetermineBuyState(botBrain)
 
   --tarkastetaan, onko tarpeeksi rahaa ostaa item
-   local nextItemDef = behaviorLib.DetermineNextItemDef(botBrain)
-   local kultaMaara = botBrain:GetGold()
-   local itemCost = core.unitSelf:GetItemCostRemaining(nextItemDef)
+  local nextItemDef = behaviorLib.DetermineNextItemDef(botBrain)
+  local kultaMaara = botBrain:GetGold()
+  local itemCost = core.unitSelf:GetItemCostRemaining(nextItemDef)
 
 
   
-  if kultaMaara > itemCost then 
+  if nextItemDef and itemCost > 0 and kultaMaara > itemCost then  
     return 100
   end
 
@@ -117,10 +117,10 @@ Current algorithm:
        1. Boots / +ms
        2. Magic Armor
        4. Most Expensive Item(s) (price decending)
---]]
-  if object.bUseShop == false then
-    return
-  end
+       --]]
+       if object.bUseShop == false then
+        return
+      end
 
   -- Space out your buys
   if behaviorLib.nextBuyTime > HoN.GetGameTime() then
@@ -167,18 +167,18 @@ Current algorithm:
 
     if #componentDefs > slotsOpen + 1 then --1 for provisional slot
       behaviorLib.SellLowestItems(botBrain, #componentDefs - slotsOpen - 1)
-    elseif #componentDefs == 0 then
-      behaviorLib.ShuffleCombine(botBrain, nextItemDef, unitSelf)
-    end
+      elseif #componentDefs == 0 then
+        behaviorLib.ShuffleCombine(botBrain, nextItemDef, unitSelf)
+      end
 
-    local nGoldAmountBefore = botBrain:GetGold()
-    
-    if nextItemDef ~= nil and unitSelf:GetItemCostRemaining(nextItemDef) < nGoldAmountBefore then
-      unitSelf:PurchaseRemaining(nextItemDef)
-    end
+      local nGoldAmountBefore = botBrain:GetGold()
 
-    local nGoldAmountAfter = botBrain:GetGold()
-    bGoldReduced = (nGoldAmountAfter < nGoldAmountBefore)
+      if nextItemDef ~= nil and unitSelf:GetItemCostRemaining(nextItemDef) < nGoldAmountBefore then
+        unitSelf:PurchaseRemaining(nextItemDef)
+      end
+
+      local nGoldAmountAfter = botBrain:GetGold()
+      bGoldReduced = (nGoldAmountAfter < nGoldAmountBefore)
 
     --Check to see if this purchased item has uncombined parts
     componentDefs = unitSelf:GetItemComponentsRemaining(nextItemDef)
@@ -252,31 +252,31 @@ function generics.CustomHarassUtility(target)
   nUtil = nUtil - (1 - unitSelf:GetHealthPercent()) * 100
 
   if unitSelf:GetHealth() > target:GetHealth() then
-     nUtil = nUtil + 10
-  end
-  
-  if target:IsChanneling() or target:IsDisarmed() or target:IsImmobilized() or target:IsPerplexed() or target:IsSilenced() or target:IsStunned() or unitSelf:IsStealth() then
-    nUtil = nUtil + 50
+   nUtil = nUtil + 10
+ end
+
+ if target:IsChanneling() or target:IsDisarmed() or target:IsImmobilized() or target:IsPerplexed() or target:IsSilenced() or target:IsStunned() or unitSelf:IsStealth() then
+  nUtil = nUtil + 50
+end
+
+local unitsNearby = core.AssessLocalUnits(object, myPos,100)
+
+
+if core.NumberElements(unitsNearby.AllyHeroes) == 0 then
+
+  if core.GetClosestEnemyTower(myPos, 720) then
+    nUtil = nUtil - 100
   end
 
-  local unitsNearby = core.AssessLocalUnits(object, myPos,100)
-  
-  
-  if core.NumberElements(unitsNearby.AllyHeroes) == 0 then
-  
-    if core.GetClosestEnemyTower(myPos, 720) then
-      nUtil = nUtil - 100
-    end
-    
-    for id, creep in pairs(unitsNearby.EnemyCreeps) do
-      local creepPos = creep:GetPosition()
-      if(creep:GetAttackType() == "ranged" or Vector3.Distance2D(myPos, creepPos) < 20) then
-        nUtil = nUtil - 20
-      end 
-    end
+  for id, creep in pairs(unitsNearby.EnemyCreeps) do
+    local creepPos = creep:GetPosition()
+    if(creep:GetAttackType() == "ranged" or Vector3.Distance2D(myPos, creepPos) < 20) then
+      nUtil = nUtil - 20
+    end 
   end
+end
 
-  return nUtil
+return nUtil
 end
 
 
