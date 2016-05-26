@@ -126,19 +126,6 @@ end
 
 local function CustomHarassHeroUtilityFnOverride(hero)
 
-  -- local enemyShop = core.enemyFountain
-  -- local enemyShopPos = enemyShop:GetPosition()
-  -- local omaPos = core.unitSelf:GetPosition()
-  -- local etaisyys = Vector3.Distance2DSq(omaPos, enemyShopPos)
-
- 
-  
-  -- if etaisyys < 1200 then
-  --   return 0
-  -- end
-
-
-
   local nUtil = 0
   local unitEnemy = GetLowestHPEnemy()
   if unitEnemy and unitEnemy:GetHealthPercent() < 0.3 then
@@ -186,6 +173,20 @@ end
 -- override combat event trigger function.
 object.oncombateventOld = object.oncombatevent
 object.oncombatevent = object.oncombateventOverride
+
+
+local function CustomHarassUtilityFnOverride(target)
+  local nUtility = 0
+
+  
+
+  return generics.CustomHarassUtility(target) + nUtility
+end
+behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride
+
+
+
+
 
 local function DetermineClosestEnemy(skill) 
   local tLocalEnemies = core.CopyTable(core.localUnits["EnemyHeroes"])

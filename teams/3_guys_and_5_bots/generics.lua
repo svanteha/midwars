@@ -249,6 +249,18 @@ function generics.CustomHarassUtility(target)
   local unitSelf = core.unitSelf
   local myPos = unitSelf:GetPosition()
 
+
+  local enemyWellPos = core.enemyWell:GetPosition()
+  local etaisyys = Vector3.Distance2DSq(myPos, enemyWellPos)
+
+ 
+  
+  if etaisyys < 2081*2037 then
+    
+    nUtil = nUtil - 10000
+  end
+
+
   nUtil = nUtil - (1 - unitSelf:GetHealthPercent()) * 100
 
   if unitSelf:GetHealth() > target:GetHealth() then

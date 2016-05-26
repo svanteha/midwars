@@ -341,51 +341,24 @@ UltiBehavior["Name"] = "Ulti enable"
 tinsert(behaviorLib.tBehaviors, UltiBehavior)
 
 
--- Harass general. Heron agressiivisuus luku: isompi luku -> vihasempi kaveri. Tähän voi määrittää logiikkaa agressiivisuudelle
-------------------------------------------------------
--- CustomHarassUtility Override --
--- Change Utility according to usable spells here --
-------------------------------------------------------
--- @param: IunitEntity hero
--- @return: number
--- local function CustomHarassUtilityOverride(target)
---   local nUtility = 0
+local function CustomHarassUtilityOverride(target)
+  local nUtility = 0
 
---   if skills.hook:CanActivate() then
---     nUtility = nUtility + 10
---   end
-
---   if skills.ulti:CanActivate() then
---     nUtility = nUtility + 40
---   end
-
---   return generics.CustomHarassUtility(target) + nUtility
--- end
--- behaviorLib.CustomHarassUtility = CustomHarassUtilityOverride
-
-
-
-
-local function CustomHarassHeroUtilityFnOverride(hero)
-
-  local enemyShop = core.enemyWell
-  local enemyShopPos = enemyShop:GetPosition()
-  local omaPos = core.unitSelf:GetPosition()
-  local etaisyys = Vector3.Distance2DSq(omaPos, enemyShopPos)
-
- 
-  
-  if etaisyys < 1200 then
-    
-    return 0
+  if skills.hook:CanActivate() then
+    nUtility = nUtility + 10
   end
 
+  if skills.ulti:CanActivate() then
+    nUtility = nUtility + 40
+  end
 
-  return object.HarassUtilityOld(hero)
+  return generics.CustomHarassUtility(target) + nUtility
 end
+behaviorLib.CustomHarassUtility = CustomHarassUtilityOverride
 
-object.HarassUtilityOld = behaviorLib.HarassHeroBehavior["Utility"]
-behaviorLib.HarassHeroBehavior["Utility"] = CustomHarassHeroUtilityFnOverride 
+
+
+
 
   -- Harass hero
   local function HarassHeroExecuteOverride(botBrain)

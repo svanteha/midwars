@@ -126,27 +126,6 @@ object.oncombatevent = object.oncombateventOverride
 
 
 
--- local function CustomHarassHeroUtilityFnOverride(hero)
-
---   local enemyShop = core.enemyFountain
---   local enemyShopPos = enemyShop:GetPosition()
---   local omaPos = core.unitSelf:GetPosition()
---   local etaisyys = Vector3.Distance2DSq(omaPos, enemyShopPos)
-
- 
-  
---   if etaisyys < 1200 then
---     return 0
---   end
-
-
---   return object.HarassUtilityOld(hero)
--- end
--- -- assisgn custom Harrass function to the behaviourLib object
--- object.HarassUtilityOld = behaviorLib.HarassHeroBehavior["Utility"]
--- behaviorLib.HarassHeroBehavior["Utility"] = CustomHarassHeroUtilityFnOverride 
-
-
 
 
 local function ComboUtility(botBrain)
@@ -184,6 +163,23 @@ ComboBehavior["Execute"] = ComboExecute
 ComboBehavior["Name"] = "Combo like a motherfucker"
 tinsert(behaviorLib.tBehaviors, ComboBehavior)
 
+
+
+
+local function CustomHarassUtilityFnOverride(target)
+  local nUtility = 0
+
+  
+
+  return generics.CustomHarassUtility(target) + nUtility
+end
+behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride
+
+
+
+
+
+
 local manaTarget = nil
 local function FindManaTarget(botBrain, mana)
   if core.unitSelf:GetManaPercent() < 0.6 then
@@ -203,6 +199,8 @@ local function FindManaTarget(botBrain, mana)
   end
   return target
 end
+
+
 local function ManaUtility(botBrain)
   local mana = skills.mana
   local heal = skills.heal
