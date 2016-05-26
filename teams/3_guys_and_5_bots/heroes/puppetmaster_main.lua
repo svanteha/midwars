@@ -310,7 +310,7 @@ behaviorLib.LaneItems =
         behaviorLib.MidItems =
         {"Item_Voltstone", "Item_Lightbrand", "Item_Frozenlight", "Item_Dawnbringer"}
         behaviorLib.LateItems =
-        {"Item_Warpcleft 2", "Item_ArclightCrown", "Item_Voulge", "Item_Weapon3", "Item_BehemothsHeart"}
+        {"Item_Warpcleft 2", "Item_ArclightCrown", "Item_Voulge", "Item_Weapon3", "Item_BehemothsHeart", "Item_Morph"}
 
 
 BotEcho('finished loading puppetmaster_main')

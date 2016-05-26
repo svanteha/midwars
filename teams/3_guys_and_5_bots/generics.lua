@@ -103,7 +103,7 @@ local function ShopUtilityOverride(botBrain)
 
 
   
-  if nextItemDef and itemCost > 0 and kultaMaara > itemCost then  
+  if nextItemDef and itemCost > 0 and kultaMaara > itemCost and NumberSlotsOpenStash(core.unitSelf:GetInventory(true)) > 0  then  
     return 100
   end
 
@@ -345,5 +345,37 @@ local function PushExecuteFix(botBrain)
   end
 end
 behaviorLib.PushBehavior["Execute"] = PushExecuteFix
+
+local sheepstick = nil
+function behaviorLib.SheepStickUtil(botBrain)
+  local unitSelf = core.unitSelf
+  sheepstick = core.GetItem("Item_Morph")
+
+
+  local hero = behaviorLib.heroTarget
+
+  if sheepstick and sheepstick:CanActivate() and hero then --only when we have a target
+    local nRange = sheepstick:GetRange()
+    local nDistanceSq = Vector3.Distance2DSq(unitSelf:GetPosition(), hero:GetPosition())
+    
+    if hero:IsValid() and hero:IsAlive() and nDistanceSq < nRange * nRange and not hero:IsStunned() and not hero:HasState("State_Item4K")then
+      return 100
+    end
+  end
+  return 0
+end
+
+function behaviorLib.SheepStickExecute(botBrain)
+  local unitSelf = core.unitSelf
+  return core.OrderItemEntityClamp(botBrain, unitSelf, sheepstick, behaviorLib.heroTarget, false)
+end
+
+
+behaviorLib.tItemBehaviors["Item_Morph"] = {}
+behaviorLib.tItemBehaviors["Item_Morph"]["Utility"] = behaviorLib.SheepStickUtil
+behaviorLib.tItemBehaviors["Item_Morph"]["Execute"] = behaviorLib.SheepStickExecute
+behaviorLib.tItemBehaviors["Item_Morph"]["Name"] = "UseSheepStick"
+
+
 
 BotEcho("default generics done.")

@@ -512,6 +512,6 @@ behaviorLib.LaneItems =
         behaviorLib.MidItems =
         {"Item_Steamboots", "Item_Beastheart", "Item_Shield2", "Item_SolsBulwark"}
         behaviorLib.LateItems =
-        {"Item_DaemonicBreastplate", "Item_BehemothsHeart", "Item_Wingbow", "Item_Evasion", "Item_Protect"}
+        {"Item_DaemonicBreastplate", "Item_BehemothsHeart", "Item_Wingbow", "Item_Evasion", "Item_Protect", "Item_Morph"}
 
         BotEcho('finished loading devourer_main')
