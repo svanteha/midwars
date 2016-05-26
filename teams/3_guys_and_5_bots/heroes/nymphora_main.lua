@@ -124,6 +124,31 @@ end
 object.oncombateventOld = object.oncombatevent
 object.oncombatevent = object.oncombateventOverride
 
+
+
+-- local function CustomHarassHeroUtilityFnOverride(hero)
+
+--   local enemyShop = core.enemyFountain
+--   local enemyShopPos = enemyShop:GetPosition()
+--   local omaPos = core.unitSelf:GetPosition()
+--   local etaisyys = Vector3.Distance2DSq(omaPos, enemyShopPos)
+
+ 
+  
+--   if etaisyys < 1200 then
+--     return 0
+--   end
+
+
+--   return object.HarassUtilityOld(hero)
+-- end
+-- -- assisgn custom Harrass function to the behaviourLib object
+-- object.HarassUtilityOld = behaviorLib.HarassHeroBehavior["Utility"]
+-- behaviorLib.HarassHeroBehavior["Utility"] = CustomHarassHeroUtilityFnOverride 
+
+
+
+
 local function ComboUtility(botBrain)
   local heal = skills.heal
   local stun = skills.stun
@@ -207,9 +232,9 @@ behaviorLib.StartingItems = {"Item_MinorTotem", "Item_MinorTotem", "Item_ManaBat
 behaviorLib.LaneItems =
         {"Item_ManaRegen3", "Item_Marchers", "Item_PowerSupply", "Item_Steamboots"}
         behaviorLib.MidItems =
-        {"Item_Glowstone", "Item_Lifetube", "Item_Protect", "Item_LifeSteal5"}
+        {"Item_Glowstone", "Item_Lifetube", "Item_Protect", "Item_NomesWisdom"}
         behaviorLib.LateItems =
-        {"Item_Protect", "Item_Lightning1", "Item_Morph", "Item_BehemothsHeart", "4 Item_Critical1"}
+        {"Item_Protect", "Item_Lightning1", "Item_Morph", "Item_BehemothsHeart", "Item_Critical1 4"}
 
 
 BotEcho('finished loading nymphora_main')

@@ -169,6 +169,30 @@ end
 -- assisgn custom Harrass function to the behaviourLib object
 behaviorLib.CustomHarassUtility = CustomHarassUtilityFnOverride 
 
+
+
+
+
+-- local function CustomHarassHeroUtilityFnOverride(hero)
+
+--   local enemyShop = core.enemyFountain
+--   local enemyShopPos = enemyShop:GetPosition()
+--   local omaPos = core.unitSelf:GetPosition()
+--   local etaisyys = Vector3.Distance2DSq(omaPos, enemyShopPos)
+
+ 
+  
+--   if etaisyys < 1200 then
+--     return 0
+--   end
+
+
+--   return object.HarassUtilityOld(hero)
+-- end
+-- -- assisgn custom Harrass function to the behaviourLib object
+-- object.HarassUtilityOld = behaviorLib.HarassHeroBehavior["Utility"]
+-- behaviorLib.HarassHeroBehavior["Utility"] = CustomHarassHeroUtilityFnOverride 
+
 -- Harass hero
 local function HarassHeroExecuteOverride(botBrain)
   local unitTarget = behaviorLib.heroTarget

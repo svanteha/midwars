@@ -128,7 +128,7 @@ function object:oncombateventOverride(EventData)
       if teamBotBrain.SetTeamTarget then
         teamBotBrain:SetTeamTarget(unitTarget)
       end
-      core.AllChat("*BOOM* Skill shot!")
+      
     end
   end
 
@@ -268,4 +268,3 @@ behaviorLib.LateItems =
 {"Item_Critical1 4", "Item_Wingbow", "Item_Evasion", "Item_Voulge", "Item_Weapon3"} 
 
 BotEcho('finished loading devourer_main')
-

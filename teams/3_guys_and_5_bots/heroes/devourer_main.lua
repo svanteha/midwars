@@ -348,20 +348,44 @@ tinsert(behaviorLib.tBehaviors, UltiBehavior)
 ------------------------------------------------------
 -- @param: IunitEntity hero
 -- @return: number
-local function CustomHarassUtilityOverride(target)
-  local nUtility = 0
+-- local function CustomHarassUtilityOverride(target)
+--   local nUtility = 0
 
-  if skills.hook:CanActivate() then
-    nUtility = nUtility + 10
+--   if skills.hook:CanActivate() then
+--     nUtility = nUtility + 10
+--   end
+
+--   if skills.ulti:CanActivate() then
+--     nUtility = nUtility + 40
+--   end
+
+--   return generics.CustomHarassUtility(target) + nUtility
+-- end
+-- behaviorLib.CustomHarassUtility = CustomHarassUtilityOverride
+
+
+
+
+local function CustomHarassHeroUtilityFnOverride(hero)
+
+  local enemyShop = core.enemyWell
+  local enemyShopPos = enemyShop:GetPosition()
+  local omaPos = core.unitSelf:GetPosition()
+  local etaisyys = Vector3.Distance2DSq(omaPos, enemyShopPos)
+
+ 
+  
+  if etaisyys < 1200 then
+    
+    return 0
   end
 
-  if skills.ulti:CanActivate() then
-    nUtility = nUtility + 40
-  end
 
-  return generics.CustomHarassUtility(target) + nUtility
+  return object.HarassUtilityOld(hero)
 end
-behaviorLib.CustomHarassUtility = CustomHarassUtilityOverride
+
+object.HarassUtilityOld = behaviorLib.HarassHeroBehavior["Utility"]
+behaviorLib.HarassHeroBehavior["Utility"] = CustomHarassHeroUtilityFnOverride 
 
   -- Harass hero
   local function HarassHeroExecuteOverride(botBrain)
@@ -421,6 +445,13 @@ behaviorLib.HarassHeroBehavior["Execute"] = HarassHeroExecuteOverride
 -- @param: tGameVariables
 -- @return: none
 function object:onthinkOverride(tGameVariables)
+
+ -- for id,unit in pairs (HoN.GetUnitsInRadius(core.allyWell:GetPosition(), 100000, core.UNIT_MASK_ALIVE + core.UNIT_MASK_UNIT)) do
+ --    BotEcho(id, unit)
+ --    local nimi = unit:GetTypeName()
+ --    local id = unit:GetOwnerPlayerID()
+ -- end
+
  self:onthinkOld(tGameVariables)
 
 end
