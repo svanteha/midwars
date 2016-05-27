@@ -51,3 +51,13 @@ Alias "legion_add_bots2" "set teambotmanager_hellbourne 3_guys_and_5_bots; AddBo
 
 
 Alias "hellbourme_add_bots2" "set teambotmanager_legion default; AddBot 1 Default_Devourer; AddBot 1 Default_MonkeyKing; AddBot 1 Default_Nymphora; AddBot 1 Default_PuppetMaster; AddBot 1 Default_Valkyrie"
+
+
+
+
+Tournament aliases: 
+
+
+Alias "3_guys_5_bots_legion" "set teambotmanager_legion 3_guys_and_5_bots; AddBot 1 3_guys_and_5_bots_Devourer; AddBot 1 3_guys_and_5_bots_MonkeyKing; AddBot 1 3_guys_and_5_bots_Nymphora; AddBot 1 3_guys_and_5_bots_PuppetMaster; AddBot 1 3_guys_and_5_bots_Valkyrie"
+
+Alias "3_guys_5_bots_hellbourne" "set teambotmanager_hellbourne 3_guys_and_5_bots; AddBot 2 3_guys_and_5_bots_Devourer; AddBot 2 3_guys_and_5_bots_MonkeyKing; AddBot 2 3_guys_and_5_bots_Nymphora; AddBot 2 3_guys_and_5_bots_PuppetMaster; AddBot 2 3_guys_and_5_bots_Valkyrie"
