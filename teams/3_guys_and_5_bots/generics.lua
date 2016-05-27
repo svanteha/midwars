@@ -36,7 +36,7 @@ local function NumberSlotsOpenStash(inventory)
   return numOpen
 end
 
-
+local count = 0
 --Send items with courier
 local function CourierUtility(botBrain)
 --Jos stashissä itemeitä palauta korkea arvo
@@ -44,8 +44,9 @@ local function CourierUtility(botBrain)
 
 local inventory = core.unitSelf:GetInventory(true)
 local openSlots = NumberSlotsOpenStash(inventory)
-
-  if botBrain:GetGold() > 5000 then 
+count = count+1
+  if count > (25*60) then 
+    count = 0
     return 100
   end
 
