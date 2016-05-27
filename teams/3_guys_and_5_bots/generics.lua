@@ -45,7 +45,8 @@ local function CourierUtility(botBrain)
 local inventory = core.unitSelf:GetInventory(true)
 local openSlots = NumberSlotsOpenStash(inventory)
 count = count+1
-  if count > (25*60) then 
+  if count > 500 then 
+
     count = 0
     return 100
   end
