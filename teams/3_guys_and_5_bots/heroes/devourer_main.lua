@@ -514,7 +514,7 @@ behaviorLib.StartingItems = {"Item_IronBuckler", "Item_ManaBattery", "Item_Minor
 behaviorLib.LaneItems =
         {"Item_PowerSupply", "Item_Marchers", "Item_MysticVestments"} -- Shield2 is HotBL
         behaviorLib.MidItems =
-        {"Item_Steamboots", "Item_Beastheart", "Item_Shield2", "Item_SolsBulwark"}
+        {"Item_Steamboots", "Item_Shield2", "Item_SolsBulwark"}
         behaviorLib.LateItems =
         {"Item_DaemonicBreastplate", "Item_BehemothsHeart", "Item_Wingbow", "Item_Evasion", "Item_Protect", "Item_Morph"}
 
