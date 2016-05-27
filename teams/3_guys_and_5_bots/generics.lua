@@ -45,6 +45,10 @@ local function CourierUtility(botBrain)
 local inventory = core.unitSelf:GetInventory(true)
 local openSlots = NumberSlotsOpenStash(inventory)
 
+  if botBrain:GetGold() > 5000 then 
+    return 100
+  end
+
   --käydään kaikki unitit läpi, jos on olemassa oma courier, niin palautetaan 0, koska silloin courier on liikkellä
   --jos haluat optimoida, laita katsomaan pienemmältä alueelta kuin 100000 :D silloin pitää tosin pistää muistiin courierin state
 

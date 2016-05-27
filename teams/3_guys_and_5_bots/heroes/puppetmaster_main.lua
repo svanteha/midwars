@@ -311,9 +311,9 @@ behaviorLib.StartingItems = {"2 Item_MinorTotem", "Item_HealthPotion", "Item_Man
 behaviorLib.LaneItems =
         {"Item_PowerSupply", "Item_Marchers", "Item_Steamboots"}
         behaviorLib.MidItems =
-        {"Item_Voltstone", "Item_Lightbrand", "Item_Frozenlight", "Item_Dawnbringer"}
+        {"Item_Voltstone", "Item_Glowstone", "Item_Lifetube", "Item_Protect"}
         behaviorLib.LateItems =
-        {"Item_Warpcleft 2", "Item_ArclightCrown", "Item_Voulge", "Item_Weapon3", "Item_BehemothsHeart", "Item_Morph"}
+        {"Item_Warpcleft 2", "Item_ArclightCrown", "Item_Voulge", "Item_Weapon3", "Item_Morph", "Item_BehemothsHeart"}
 
 
 BotEcho('finished loading puppetmaster_main')

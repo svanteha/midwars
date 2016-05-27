@@ -230,7 +230,7 @@ behaviorLib.StartingItems = {"Item_MinorTotem", "Item_MinorTotem", "Item_ManaBat
 behaviorLib.LaneItems =
         {"Item_ManaRegen3", "Item_Marchers", "Item_PowerSupply", "Item_Steamboots"}
         behaviorLib.MidItems =
-        {"Item_Glowstone", "Item_Lifetube", "Item_Protect", "Item_NomesWisdom"}
+        {"Item_MysticVestments", "Item_Manatube", "Item_NomesWisdom", "Item_Glowstone", "Item_Lifetube", "Item_Protect"}
         behaviorLib.LateItems =
         {"Item_Protect", "Item_Lightning1", "Item_Morph", "Item_BehemothsHeart", "Item_Critical1 4"}
 
